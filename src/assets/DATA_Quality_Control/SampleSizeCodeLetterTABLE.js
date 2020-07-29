@@ -17,6 +17,8 @@ const SampleSizeTable=
     {"min":"500001","max":"100000000000","S-1":"D","S-2":"E","S-3":"H","S-4":"K","I":"N","II":"Q","III":"R"}
 ];
 
+
+
 export default {SampleSizeTable}
 
 

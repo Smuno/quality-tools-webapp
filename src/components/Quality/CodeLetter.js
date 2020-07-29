@@ -173,6 +173,32 @@ const SampleSizeTable = [
  * @param {*} lotSize
  * @returns
  */
+
+const letterList=
+[ "A",
+  "B",
+  "C",
+  "D",
+  "E",
+  "F",
+  "G",
+  "H",
+  "J",
+  "K",
+  "L",
+  "M",
+  "N",
+  "P",
+  "Q",
+  "R"
+]
+const sampleSizeList=[2,3,5,8,13,20,32,50,80,125,200,315,500,800,1250]
+
+
+function determineSampleSize(letterfound){
+  return sampleSizeList[ letterList.indexOf(letterfound) ]
+}
+
 function determineLetter(inspectionLevel, lotSize) {
   console.log("Executing determineLetter");
   const tableIndex = SampleSizeTable.findIndex(el => {
@@ -200,4 +226,4 @@ const listInspectionLevels = [
   { value: "III", text: "Inspeccion Extricta" }
 ];
 
-export { determineLetter, listInspectionLevels };
+export { determineLetter, listInspectionLevels , determineSampleSize , sampleSizeList};
