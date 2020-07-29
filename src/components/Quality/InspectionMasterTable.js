@@ -215,9 +215,9 @@ const listAql = [
  * @returns
  */
 function findRule(letterSelected, aqlSelected) {
-  console.log("Executing findRule()");
-  console.log("Buscando aql: ", aqlSelected);
-  console.log("Buscando letra: ", letterSelected);
+  // console.log("Executing findRule()");
+  // console.log("Buscando aql: ", aqlSelected);
+  // console.log("Buscando letra: ", letterSelected);
 
   let rulefound = { acceptanceNumber: -1, rejectionNumber: -1 };
   if (letterSelected !== null && aqlSelected !== null) {

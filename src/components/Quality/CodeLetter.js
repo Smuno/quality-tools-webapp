@@ -174,6 +174,8 @@ const SampleSizeTable = [
  * @returns
  */
 
+// letterList y sampleSizeList son mismo largo
+
 const letterList=
 [ "A",
   "B",
