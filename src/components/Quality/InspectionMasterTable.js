@@ -1,4 +1,4 @@
-const NormalInspectionTable = [
+const normalInspectionTable = [
   {
     aql: 0.01,
     letters: [
@@ -179,6 +179,10 @@ const NormalInspectionTable = [
   }
 ];
 
+const tightenedInspectionTable=[];
+
+const reducedInspectionTable=[];
+
 const listAql = [
   0.01,
   0.015,
@@ -221,7 +225,7 @@ function findRule(letterSelected, aqlSelected) {
 
   let rulefound = { acceptanceNumber: -1, rejectionNumber: -1 };
   if (letterSelected !== null && aqlSelected !== null) {
-    NormalInspectionTable.forEach(el => {
+    normalInspectionTable.forEach(el => {
       //      console.log("---------------")
       //    console.log("Recorrido tabla",el)
       //  console.log("aql include",el.aql === aqlSelected)

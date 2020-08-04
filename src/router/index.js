@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Tempo from '../views/Tempo.vue'
 
 Vue.use(VueRouter)
 
@@ -10,6 +11,11 @@ const routes = [
     name: 'Home',
     component: Home
   },
+  {
+    path:'/tempo',
+    name:'tempo',
+    component: Tempo
+  }
 ]
 
 const router = new VueRouter({

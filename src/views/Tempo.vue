@@ -1,17 +1,19 @@
 <template>
-  <div class="home">
-    <the-lot-acceptance/>
+  <div class="tempo">
+    <The5W>
+        
+    </The5W>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import TheLotAcceptance from "../components/Quality/TheLotAcceptance.vue"
+import The5W from "../components/5W/The5W"
 
 export default {
-  name: 'Home',
+  name: 'Tempo',
   components:{
-    TheLotAcceptance
+    The5W
   },
   data(){
     return{
