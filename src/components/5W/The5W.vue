@@ -1,6 +1,6 @@
 <template>
     <b-container class="5W">
-        <only1-w levelRow="1" :levelCol="esteNivel" />
+        <only1-w levelRow="1" :levelCol="esteNivel" :yourLevel="inicio"  :amIaChild="false" :need-newrow="nadanarinas"/>
     </b-container>
 </template>
 
@@ -14,10 +14,14 @@ export default {
     },
     data(){
         return{
-            esteNivel:0
+            esteNivel:0,
+            inicio:[1],
         }
     },
     methods: {
+        nadanarinas:function(){
+            console.log('in The5W')
+        }
         
     },
     computed: {
