@@ -1,6 +1,6 @@
 <template>
     <b-container class="5W">
-        <only1-w levelRow="1" :levelCol="esteNivel" :yourLevel="inicio"  :amIaChild="false" :need-newrow="nadanarinas"/>
+        <only1-w :levelCol="esteNivel" :yourLevel="inicio"  :amIaChild="false" :need-newrow="nadanarinas"/>
     </b-container>
 </template>
 

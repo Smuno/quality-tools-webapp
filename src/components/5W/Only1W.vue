@@ -3,15 +3,13 @@
     <b-row>
       <b-col class="bg-secondary text-light rowMain" :md="colSize">
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
-        <p @click="userClick">Actual Level {{actualLevel}}</p>
+        <p @click="userClick">Actual Level {{ actualLevel }}</p>
       </b-col>
       <!--  Hacia la derecha-->
       <b-col>
         <Only1W
           v-if="isThisTheEnd"
           :yourLevel="nextyourLevel"
-          :ref="'rowMain' + levelRow + levelCol"
-          :levelRow="nextLevel"
           :levelCol="levelCol + 1"
         >
         </Only1W>
@@ -21,9 +19,7 @@
     <div v-if="isNewRow">
       <Only1W
         v-for="(fila, index) in listRow"
-        :yourLevel="levelNewRow(index)"
-        :ref="'newRow' + levelRow + levelCol + index"
-        :levelRow="levelRow.slice(0, -1) + (fila + 1)"
+        :yourLevel="levelNewRow(index+1)"
         :levelCol="levelCol"
         :key="index"
         :amIaChild="true"
@@ -38,57 +34,70 @@
 export default {
   name: "Only1W",
   props: {
-    levelRow: String,
+    /*levelCol Controla profundidad (nunmero de columnas) - 
+    usado como parada en isThisTheEnd*/
     levelCol: Number,
+    /* Padre controla el nivel (ej 1.1.2)
+    de la forma [1][1][2] - no debe cambiar */
     yourLevel: Array,
-    amIaChild:Boolean
+    /* Para saber si es un hijo ¿hay forma mas eficiente? */
+    amIaChild: Boolean
   },
   data() {
     return {
+      /* Controla visualizacion de una nueva fila - se cambia en newRow*/
       isNewRow: false,
+      /* Controla nuevas filas dentro de la instancia, cada click (userClick) añade
+      un nuevo elemento en listRow que visualiza fila en v-for */
       listRow: [],
-      text: null
+      count:0,
     };
   },
   methods: {
+    /* Crea una nueva fila añadiendo elemento en listRow */
     newRow: function() {
-      console.log("click");
-      console.log(this.$refs);
-      if (!this.isNewRow) {
-        this.isNewRow = true;
-        this.listRow.push(1);
+      console.log("---newRow-----");
+      console.log("Click");
+      //console.log(this.$refs);
+      this.isNewRow = true;
+      this.listRow.push(1);
+      console.log("listRow: ", this.listRow);
+      console.log("---------------");
+    },
+    /* En click controla si crear nueva linea o solicitar al padre que lo haga */
+    userClick: function() {
+      // Crear nueva linea solo si es padre - Funcion no requiere cambios
+      if (this.amIaChild) {
+        this.$emit("neednewrow");
       } else {
-        this.listRow.push(this.listRow[this.listRow.length - 1] + 1);
+        this.newRow();
       }
     },
-    userClick:function(){
-      if (this.amIaChild){
-        console.log('yes I am a child')
-        this.$emit('neednewrow')
-      }else{
-        console.log('I am father')
-        this.newRow()
-      }
-    },
-    levelNewRow: function (index){
-      let toreturn=this.yourLevel
-      toreturn[toreturn.length-1]=toreturn[toreturn.length-1]+1
-      return toreturn
+    /* Crea etiqueta de nivel para nueva fila- REQUIERE MODIFICACION */
+    levelNewRow: function(index) {
+      let toreturn = this.yourLevel;
+      console.log("----levelNewRow---------");
+      console.log("yourLevel: ", this.yourLevel);
+      console.log('index: ',index)
+      toreturn[toreturn.length - 1] = index+1;
+      console.log("return: ", toreturn);
+      console.log("------------------------");
+      return toreturn;
     }
   },
   computed: {
-    //modificar a nuevo estandar array (levelFather)
-    nextLevel: function() {
-      return this.levelRow + ".1";
+    /* Crea etiqueta para siguiente columna - Funciona bien*/
+    nextyourLevel: function() {
+      const toadd = 1;
+      const toreturn = this.yourLevel.concat(toadd);
+      return toreturn;
     },
-    nextyourLevel: function(){
-      const toadd=1
-      const toreturn=this.yourLevel.concat(toadd)
-      return toreturn
-    },
+    /* determina si debe terminar de dibujar columnas (limitado a 4 por contexto 5Why) */
     isThisTheEnd: function() {
       return this.levelCol < 4;
     },
+    /* Determina ancho de columna segun profundidad - tabulado a la mala pero funciona
+    ¿hay otra forma? */
     colSize: function() {
       let innerSize = 3;
       switch (this.levelCol) {
@@ -112,22 +121,27 @@ export default {
       }
       return innerSize;
     },
+    /* Crea string para el nivel añadiendo puntos entre numeros- funciona bien */
     actualLevel: function() {
       let stringLevel = "";
       this.yourLevel.forEach((el, index) => {
         if (index === 0) {
-          stringLevel=el.toString()
+          //console.log('index 0: '+el.toString())
+          //console.log('index 0 num: ',el)
+          stringLevel = el.toString();
         } else {
+          //console.log('no index 0: '+el.toString())
+          //console.log('no index 0 num: ',el)
           stringLevel = stringLevel + "." + el.toString();
         }
       });
-      return stringLevel
+      return stringLevel;
     }
   }
 };
 </script>
 
-<style scoped>
+<style >
 .rowMain {
   border-top-style: solid;
   border-bottom-style: solid;
