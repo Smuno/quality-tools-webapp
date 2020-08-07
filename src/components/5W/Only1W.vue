@@ -1,10 +1,10 @@
 <template>
   <div>
-    <b-row>
-      <b-col class="bg-info text-light rowMain" :md="colSize">
+    <b-row class="bg-info">
+      <b-col class="text-light rowMain" :md="colSize">
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
         <editor-content class="textFromThisLevel" :editor="editor" />
-        <!-- <p @click="userClick">Actual Level {{ actualLevel }}</p> -->
+        <!-- Botones para añadir y remover sub-filas -->
         <b-button @click="userClick" variant="success" size="sm">+</b-button>
         <b-button
           v-show="!amIaChild && listRow.length > 0"
@@ -72,8 +72,11 @@ export default {
       count: 0,
       /* usado por tiptap */
       editor: null,
+      /* Para el texto del editor del nivel presente */
       textCurrentLevel: null,
+      /* data de la columna hijo - recursivo */
       textNextCol: null,
+      /* data de la fila hijo */
       textNextRow: []
     };
   },
@@ -112,6 +115,7 @@ export default {
       // console.log("------------------------");
       return toreturn;
     },
+    /* Listener ante llegada de datos por fila */
     listenRowData: function(index, dataFromEvent) {
       // console.log("------------------------");
       // console.log("listenRowData index ", index);
@@ -120,10 +124,12 @@ export default {
       // console.log("------------------------");
       this.textDataUpdate();
     },
+    /* Ante llegada de datos por columna */
     listenColData: function(dataFromEvent) {
       this.textNextCol = dataFromEvent;
       this.textDataUpdate();
     },
+    /* Ante cambios en cualquier nivel hijo o de este nivel */
     textDataUpdate: function() {
       //console.log('data updated')
       this.textCurrentLevel = this.editor.getJSON().content[0].content[0].text;
@@ -184,6 +190,7 @@ export default {
       });
       return stringLevel;
     },
+    /* Arma objeto para ser entregado al padre via $emit en textDataUpdate */
     allData: function() {
       return {
         father: this.textCurrentLevel,
