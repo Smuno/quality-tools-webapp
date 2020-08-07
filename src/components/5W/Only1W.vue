@@ -1,16 +1,29 @@
 <template>
   <div>
     <b-row>
-      <b-col class="bg-secondary text-light rowMain" :md="colSize">
+      <b-col class="bg-info text-light rowMain" :md="colSize">
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
-        <p @click="userClick">Actual Level {{ actualLevel }}</p>
+        <editor-content class="textFromThisLevel" :editor="editor" />
+        <!-- <p @click="userClick">Actual Level {{ actualLevel }}</p> -->
+        <b-button @click="userClick" variant="success" size="sm">+</b-button>
+        <b-button
+          v-show="!amIaChild && listRow.length > 0"
+          @click="userClickRemove"
+          variant="danger"
+          size="sm"
+          >x</b-button
+        >
       </b-col>
-      <!--  Hacia la derecha-->
+      <!-- Crea siguiente columna - Hacia la derecha-->
       <b-col>
         <Only1W
+          class="h-100 "
           v-if="isThisTheEnd"
           :yourLevel="nextyourLevel"
+          :key="actualLevel"
           :levelCol="levelCol + 1"
+          v-model="textNextCol"
+          v-on:data-updated="listenColData($event)"
         >
         </Only1W>
       </b-col>
@@ -19,11 +32,12 @@
     <div v-if="isNewRow">
       <Only1W
         v-for="(fila, index) in listRow"
-        :yourLevel="levelNewRow(index+1)"
+        :yourLevel="levelNewRow(index + 1)"
         :levelCol="levelCol"
         :key="index"
         :amIaChild="true"
         v-on:neednewrow="userClick"
+        v-on:data-updated="listenRowData(index, $event)"
       >
       </Only1W>
     </div>
@@ -31,8 +45,13 @@
 </template>
 
 <script>
+import { Editor, EditorContent } from "tiptap";
+
 export default {
   name: "Only1W",
+  components: {
+    EditorContent
+  },
   props: {
     /*levelCol Controla profundidad (nunmero de columnas) - 
     usado como parada en isThisTheEnd*/
@@ -50,19 +69,24 @@ export default {
       /* Controla nuevas filas dentro de la instancia, cada click (userClick) añade
       un nuevo elemento en listRow que visualiza fila en v-for */
       listRow: [],
-      count:0,
+      count: 0,
+      /* usado por tiptap */
+      editor: null,
+      textCurrentLevel: null,
+      textNextCol: null,
+      textNextRow: []
     };
   },
   methods: {
     /* Crea una nueva fila añadiendo elemento en listRow */
     newRow: function() {
-      console.log("---newRow-----");
-      console.log("Click");
+      // console.log("---newRow-----");
+      // console.log("Click");
       //console.log(this.$refs);
       this.isNewRow = true;
       this.listRow.push(1);
-      console.log("listRow: ", this.listRow);
-      console.log("---------------");
+      // console.log("listRow: ", this.listRow);
+      // console.log("---------------");
     },
     /* En click controla si crear nueva linea o solicitar al padre que lo haga */
     userClick: function() {
@@ -73,16 +97,39 @@ export default {
         this.newRow();
       }
     },
-    /* Crea etiqueta de nivel para nueva fila- REQUIERE MODIFICACION */
+    //Para remover una fila
+    userClickRemove: function() {
+      this.listRow.pop();
+    },
+    /* Crea etiqueta de nivel para nueva fila */
     levelNewRow: function(index) {
       let toreturn = this.yourLevel;
-      console.log("----levelNewRow---------");
-      console.log("yourLevel: ", this.yourLevel);
-      console.log('index: ',index)
-      toreturn[toreturn.length - 1] = index+1;
-      console.log("return: ", toreturn);
-      console.log("------------------------");
+      //console.log("----levelNewRow---------");
+      // console.log("yourLevel: ", this.yourLevel);
+      // console.log("index: ", index);
+      toreturn[toreturn.length - 1] = index + 1;
+      // console.log("return: ", toreturn);
+      // console.log("------------------------");
       return toreturn;
+    },
+    listenRowData: function(index, dataFromEvent) {
+      // console.log("------------------------");
+      // console.log("listenRowData index ", index);
+      this.textNextRow[index] = [dataFromEvent];
+      // console.log("text from the rows:", this.textNextRow);
+      // console.log("------------------------");
+      this.textDataUpdate();
+    },
+    listenColData: function(dataFromEvent) {
+      this.textNextCol = dataFromEvent;
+      this.textDataUpdate();
+    },
+    textDataUpdate: function() {
+      //console.log('data updated')
+      this.textCurrentLevel = this.editor.getJSON().content[0].content[0].text;
+      //console.log(this.editor.getJSON().content[0].content[0].text)
+      this.$forceUpdate();
+      this.$emit("data-updated", this.allData);
     }
   },
   computed: {
@@ -136,12 +183,32 @@ export default {
         }
       });
       return stringLevel;
+    },
+    allData: function() {
+      return {
+        father: this.textCurrentLevel,
+        columns: this.textNextCol,
+        rows: this.textNextRow
+      };
     }
+  },
+  mounted() {
+    let timeoutTyping = null;
+    this.editor = new Editor({
+      content: ("¿Por qué... "+this.actualLevel),
+      onUpdate: () => {
+        clearTimeout(this.timeoutTyping);
+        this.timeoutTyping = setTimeout(this.textDataUpdate, 1000);
+      }
+    });
+  },
+  beforeDestroy() {
+    this.editor.destroy();
   }
 };
 </script>
 
-<style >
+<style>
 .rowMain {
   border-top-style: solid;
   border-bottom-style: solid;

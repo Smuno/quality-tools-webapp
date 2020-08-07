@@ -32,3 +32,17 @@
     </b-col>
   </b-row>
 </template>
+
+<script>
+const testdata={
+  esteNivel:{
+    text:'asdf',
+    columnaSiguiente:objeto
+  },
+  Filas:[fila1,fila2,fila3],
+}
+
+export default {
+  
+}
+</script>
