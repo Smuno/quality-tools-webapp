@@ -1,5 +1,5 @@
 <template>
-  <b-container class="5W">
+  <b-container class="allWhys">
     <only1-w
       :levelCol="esteNivel"
       :yourLevel="inicio"
@@ -36,8 +36,9 @@ export default {
 </script>
 
 <style>
-#mainRow {
-  background-color: #b1b493;
-  text-align: left;
+.allWhys {
+  border-style: solid;
+  border-radius: 4px;
+  border-color: #545e63;
 }
 </style>

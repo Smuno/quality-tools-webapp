@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-row class="bg-info">
-      <b-col class="text-light rowMain" :md="colSize">
+    <b-row class="bg-info mainRow">
+      <b-col class="text-light mainCol" :md="colSize" :id="actualLevel">
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
         <editor-content class="textFromThisLevel" :editor="editor" />
         <!-- Botones para añadir y remover sub-filas -->
@@ -17,7 +17,6 @@
       <!-- Crea siguiente columna - Hacia la derecha-->
       <b-col>
         <Only1W
-          class="h-100 "
           v-if="isThisTheEnd"
           :yourLevel="nextyourLevel"
           :key="actualLevel"
@@ -83,13 +82,8 @@ export default {
   methods: {
     /* Crea una nueva fila añadiendo elemento en listRow */
     newRow: function() {
-      // console.log("---newRow-----");
-      // console.log("Click");
-      //console.log(this.$refs);
       this.isNewRow = true;
       this.listRow.push(1);
-      // console.log("listRow: ", this.listRow);
-      // console.log("---------------");
     },
     /* En click controla si crear nueva linea o solicitar al padre que lo haga */
     userClick: function() {
@@ -107,21 +101,12 @@ export default {
     /* Crea etiqueta de nivel para nueva fila */
     levelNewRow: function(index) {
       let toreturn = this.yourLevel;
-      //console.log("----levelNewRow---------");
-      // console.log("yourLevel: ", this.yourLevel);
-      // console.log("index: ", index);
       toreturn[toreturn.length - 1] = index + 1;
-      // console.log("return: ", toreturn);
-      // console.log("------------------------");
       return toreturn;
     },
     /* Listener ante llegada de datos por fila */
     listenRowData: function(index, dataFromEvent) {
-      // console.log("------------------------");
-      // console.log("listenRowData index ", index);
       this.textNextRow[index] = [dataFromEvent];
-      // console.log("text from the rows:", this.textNextRow);
-      // console.log("------------------------");
       this.textDataUpdate();
     },
     /* Ante llegada de datos por columna */
@@ -131,9 +116,7 @@ export default {
     },
     /* Ante cambios en cualquier nivel hijo o de este nivel */
     textDataUpdate: function() {
-      //console.log('data updated')
       this.textCurrentLevel = this.editor.getJSON().content[0].content[0].text;
-      //console.log(this.editor.getJSON().content[0].content[0].text)
       this.$forceUpdate();
       this.$emit("data-updated", this.allData);
     }
@@ -141,8 +124,7 @@ export default {
   computed: {
     /* Crea etiqueta para siguiente columna - Funciona bien*/
     nextyourLevel: function() {
-      const toadd = 1;
-      const toreturn = this.yourLevel.concat(toadd);
+      const toreturn = this.yourLevel.concat(1);
       return toreturn;
     },
     /* determina si debe terminar de dibujar columnas (limitado a 4 por contexto 5Why) */
@@ -178,15 +160,8 @@ export default {
     actualLevel: function() {
       let stringLevel = "";
       this.yourLevel.forEach((el, index) => {
-        if (index === 0) {
-          //console.log('index 0: '+el.toString())
-          //console.log('index 0 num: ',el)
-          stringLevel = el.toString();
-        } else {
-          //console.log('no index 0: '+el.toString())
-          //console.log('no index 0 num: ',el)
-          stringLevel = stringLevel + "." + el.toString();
-        }
+        if (index === 0) stringLevel = el.toString();
+        else stringLevel = stringLevel + "." + el.toString();
       });
       return stringLevel;
     },
@@ -202,8 +177,9 @@ export default {
   mounted() {
     let timeoutTyping = null;
     this.editor = new Editor({
-      content: ("¿Por qué... "+this.actualLevel),
+      content: "¿Por qué... " + this.actualLevel,
       onUpdate: () => {
+        //Esperando que usuario termine de tipear
         clearTimeout(this.timeoutTyping);
         this.timeoutTyping = setTimeout(this.textDataUpdate, 1000);
       }
@@ -216,8 +192,10 @@ export default {
 </script>
 
 <style>
-.rowMain {
+.mainCol {
   border-top-style: solid;
   border-bottom-style: solid;
+  border-color: #545e63;
+  background-color: #1b998b;
 }
 </style>
