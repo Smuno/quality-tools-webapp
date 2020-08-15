@@ -1,15 +1,11 @@
 <template>
-  <b-container fluid id="table">
-    <b-row>
-      <b-col cols="4">
-        <b-button v-on:click="addRow" variant="success">Nueva Fila</b-button>
-        <TabulatorComponent
-          v-model="data"
-          :options="options"
-          :integration="{ updateStrategy: 'REPLACE' }"
-        />
-      </b-col>
-    </b-row>
+  <b-container id="table">
+    <b-button v-on:click="addRow" variant="success">Nueva Fila</b-button>
+    <TabulatorComponent
+      v-model="data"
+      :options="options"
+      :integration="{ updateStrategy: 'REPLACE' }"
+    />
   </b-container>
 </template>
 
@@ -33,12 +29,13 @@ export default {
       ],
       options: {
         clipboard: true,
-        layoutColumnsOnNewData:true,
-        layout:"fitColumns",
+        layoutColumnsOnNewData: true,
+        layout: "fitColumns",
+        height: "400px",
         columns: [
           { field: "id", title: "ID", visible: false },
-          { field: "name", title: "Name", editor: true,widthGrow:2},
-          { field: "value", title: "Value", editor: true,hozAlign:"center" }
+          { field: "name", title: "Name", editor: true, widthGrow: 2 },
+          { field: "value", title: "Value", editor: true, hozAlign: "center" }
         ]
       }
     };
