@@ -3,6 +3,7 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/tempo">Tempo</router-link> |
+      <router-link to="/pareto">Pareto</router-link>
     </div>
     <router-view/>
   </div>
@@ -35,4 +36,9 @@ html{
     }
   }
 }
+</style>
+<style lang='scss'>
+
+@import "~vue-tabulator/dist/scss/bootstrap/tabulator_bootstrap4";
+
 </style>
