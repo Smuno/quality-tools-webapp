@@ -1,12 +1,20 @@
 <template>
-    <b-container fluid id="table">
+  <b-container fluid id="table">
+    <b-row>
+      <b-col cols="4">
         <b-button v-on:click="addRow" variant="success">Nueva Fila</b-button>
-        <TabulatorComponent v-model="dataTable" :options="options" />
-    </b-container>
+        <TabulatorComponent
+          v-model="data"
+          :options="options"
+          :integration="{ updateStrategy: 'REPLACE' }"
+        />
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
-import {testData} from './testData'
+import { testData } from "./testData";
 import { TabulatorComponent } from "vue-tabulator";
 
 export default {
@@ -16,22 +24,37 @@ export default {
   },
   data() {
     return {
-      dataTable:testData,
-      options:{
-        autoColumns:true,
+      data: [
+        {
+          id: 1,
+          name: "Cables rotos",
+          value: 22
+        }
+      ],
+      options: {
+        clipboard: true,
+        layoutColumnsOnNewData:true,
+        layout:"fitColumns",
+        columns: [
+          { field: "id", title: "ID", visible: false },
+          { field: "name", title: "Name", editor: true,widthGrow:2},
+          { field: "value", title: "Value", editor: true,hozAlign:"center" }
+        ]
       }
     };
   },
   methods: {
-    addRow:function(){
-      this.dataTable.push({})
+    addRow: function() {
+      this.data.push({
+        id: this.data.length + 1,
+        name: "",
+        location: "",
+        gender: "",
+        rating: 0
+      });
     }
   },
-  mounted() {
-    
-  },
-  watch:{
-    
-  }
+  mounted() {},
+  watch: {}
 };
 </script>
