@@ -11,6 +11,7 @@
     "bootstrap": "^4.5.0",
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
+    "plotly.js-dist": "^1.54.7",
     "tabulator-tables": "^4.7.2",
     "tiptap": "^1.29.3",
     "vue": "^2.6.11",

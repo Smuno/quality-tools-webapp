@@ -1,23 +1,42 @@
 <template>
   <div>
     <b-container>
-      <TableContainer />
+      <b-row>
+        <b-col><table-container v-model="tableData"/></b-col>
+        <b-col><graph-pareto :plotData="table2plotData" /> </b-col>
+      </b-row>
     </b-container>
-    <b-container></b-container>
   </div>
 </template>
 
 <script>
 import TableContainer from "../components/Pareto/TableContainer";
+import GraphPareto from "../components/Pareto/GraphPareto";
 
 export default {
   name: "Pareto",
   components: {
-    TableContainer
+    TableContainer,
+    GraphPareto
   },
   data() {
-    return {};
+    return {
+      //para v-model TableContainer
+      tableData: [{ id: 1, name: "Cables rotos", value: 22 }]
+    };
   },
-  methods: {}
+  methods: {},
+  computed: {
+    table2plotData: function() {
+      return {
+        xData: this.tableData.map(el => {
+          return el.name;
+        }),
+        yData: this.tableData.map(el => {
+          return parseInt(el.value);
+        })
+      };
+    }
+  }
 };
 </script>
