@@ -2,8 +2,12 @@
   <div>
     <b-container>
       <b-row>
-        <b-col cols="4"><table-container v-model="tableData"/></b-col>
-        <b-col><graph-pareto :plotData="plotData" /> </b-col>
+        <b-col cols="4">
+          <table-container v-model="tableData" :options="tableOptions" />
+        </b-col>
+        <b-col>
+          <graph-pareto :plotData="plotData" :layout="graphLayout" />
+        </b-col>
       </b-row>
     </b-container>
   </div>
@@ -12,6 +16,11 @@
 <script>
 import TableContainer from "../components/Pareto/TableContainer";
 import GraphPareto from "../components/Pareto/GraphPareto";
+import {
+  DEFAULT_LAYOUT,
+  DEFAULT_TABLE,
+  DEFAULT_OPTION_TABLE
+} from "../components/Pareto/ParetoConfig";
 
 export default {
   name: "Pareto",
@@ -22,10 +31,9 @@ export default {
   data() {
     return {
       //para v-model TableContainer - comienza con ejemplo
-      tableData: [
-        { id: 1, name: "Cables rotos", value: 22 },
-        { id: 2, name: "Sin materiales", value: 10 }
-      ]
+      tableData: DEFAULT_TABLE,
+      tableOptions: DEFAULT_OPTION_TABLE,
+      graphLayout: DEFAULT_LAYOUT
     };
   },
   methods: {},
@@ -56,7 +64,7 @@ export default {
         return 100 * (el / totalValue);
       });
       //Se dan vuelta para dejar de mayor a menor
-      
+
       //porcentajes.reverse();
       return {
         xNames: sorted.map(el => {

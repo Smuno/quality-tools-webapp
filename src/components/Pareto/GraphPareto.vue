@@ -6,8 +6,6 @@
 
 <script>
 import Plotly from "plotly.js-dist";
-import {LAYOUT} from './GraphConfig.js'
-
 
 //Limpiar layout - codigo repetido
 export default {
@@ -21,7 +19,8 @@ export default {
     plotData: {
       type: Object,
       required: true
-    }
+    },
+    layout: Object
   },
   methods: {},
   mounted() {
@@ -33,12 +32,12 @@ export default {
           y: this.plotData.yBar,
           type: "bar"
         }
-      ],LAYOUT,
+      ],
+      this.layout,
       { responsive: true }
     );
   },
-  computed: {
-  },
+  computed: {},
   watch: {
     plotData: function(newValue) {
       const bar = {
@@ -55,7 +54,7 @@ export default {
         yaxis: "y2"
       };
       const insidePlotData = [bar, line];
-      Plotly.react(this.$refs.tester, insidePlotData,LAYOUT);
+      Plotly.react(this.$refs.tester, insidePlotData, this.layout);
     }
   }
 };
