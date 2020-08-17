@@ -26,7 +26,6 @@ const DEFAULT_OPTION_TABLE = {
   layoutColumnsOnNewData: true,
   layout: "fitColumns",
   height: "400px",
-  selectable: true,
   columns: [
     { field: "id", title: "ID", visible: false },
     { field: "name", title: "Name", editor: true, widthGrow: 2 },

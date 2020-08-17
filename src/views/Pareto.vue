@@ -40,9 +40,9 @@ export default {
   computed: {
     //calculo de los datos para plot con depencencia de los datos de tabla
     plotData: function() {
-      //entregar ordenado de menor a mayor
+      //entregar ordenado de mayor a menor
       let sorted = [...this.tableData].sort((a, b) => {
-        return parseInt(a.value) - parseInt(b.value);
+        return parseInt(b.value) - parseInt(a.value);
       });
       /*calcular porcentajes - line*/
       //Suma de todos los valores
@@ -50,7 +50,6 @@ export default {
         return parseInt(a) + parseInt(b.value);
       }, 0);
       //Calculo de valores acumulados de menor a mayor
-      sorted.reverse();
       let porcentajes = [...sorted].reduce(
         (a, b) => {
           return a.concat(parseInt(a.slice(-1)) + parseInt(b.value));
@@ -64,7 +63,16 @@ export default {
         return 100 * (el / totalValue);
       });
       //Se dan vuelta para dejar de mayor a menor
+      let top80 = [];
 
+      porcentajes.forEach((porcent, index) => {
+        if (porcent <= 80) {
+
+          top80.push(parseInt(porcent));
+        }
+      });
+
+      console.log(top80);
       //porcentajes.reverse();
       return {
         xNames: sorted.map(el => {
@@ -73,7 +81,8 @@ export default {
         yBar: sorted.map(el => {
           return parseInt(el.value);
         }),
-        yLine: porcentajes
+        yLine: porcentajes,
+        ytopBar: top80
       };
     }
   }

@@ -46,6 +46,18 @@ export default {
         name: "Problemas",
         type: "bar"
       };
+      const topbar = {
+        x: newValue.xNames,
+        y: newValue.ytopBar,
+        mode:'markers',
+        name:'Top 80%',
+        type: "scatter",
+        yaxis:"y2",
+        marker: {
+          color: "rgb(219, 64, 82)",
+          size: 12,
+        }
+      };
       const line = {
         x: newValue.xNames,
         y: newValue.yLine,
@@ -53,7 +65,7 @@ export default {
         type: "line",
         yaxis: "y2"
       };
-      const insidePlotData = [bar, line];
+      const insidePlotData = [bar,line,topbar];
       Plotly.react(this.$refs.tester, insidePlotData, this.layout);
     }
   }
