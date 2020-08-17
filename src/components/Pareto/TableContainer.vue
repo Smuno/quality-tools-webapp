@@ -45,7 +45,7 @@ export default {
       this.userTable.push({
         id: this.userTable.length + 1,
         name: "",
-        value:''
+        value:'0'
       });
     }
   },
