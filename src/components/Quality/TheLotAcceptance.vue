@@ -118,14 +118,9 @@ export default {
   },
   computed: {
     letter: function() {
-      console.log(
-        "letter recibida",
-        this.getLetterTable(this.inspectionLevel, this.lotSize)
-      );
       return this.getLetterTable(this.inspectionLevel, this.lotSize);
     },
     rules: function() {
-      console.log("rules", this.getRules(this.letter, this.aql));
       return this.getRules(this.letter, this.aql);
     },
   },

@@ -202,7 +202,6 @@ function determineSampleSize(letterfound){
 }
 
 function determineLetter(inspectionLevel, lotSize) {
-  console.log("Executing determineLetter");
   const tableIndex = SampleSizeTable.findIndex(el => {
     if (parseInt(el.min) <= lotSize && parseInt(el.max) >= lotSize) {
       return true;
@@ -210,10 +209,8 @@ function determineLetter(inspectionLevel, lotSize) {
     return false;
   });
   if (tableIndex == -1) {
-    console.log("error -1");
     return tableIndex;
   } else {
-    console.log("Index: ", tableIndex);
     return SampleSizeTable[tableIndex][inspectionLevel];
   }
 }

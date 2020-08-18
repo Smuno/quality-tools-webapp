@@ -1,6 +1,6 @@
 const DEFAULT_TABLE = [
-  { id: 1, name: "Cables rotos", value: 22 },
-  { id: 2, name: "Sin materiales", value: 10 }
+  { name: "Cables rotos", value: 22 },
+  { name: "Sin materiales", value: 10 }
 ];
 
 const DEFAULT_LAYOUT = {
@@ -27,7 +27,6 @@ const DEFAULT_OPTION_TABLE = {
   layout: "fitColumns",
   height: "400px",
   columns: [
-    { field: "id", title: "ID", visible: false },
     { field: "name", title: "Name", editor: true, widthGrow: 2 },
     { field: "value", title: "Value", editor: true, hozAlign: "center" }
   ]

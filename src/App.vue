@@ -6,7 +6,7 @@
       <router-link to="/pareto">Pareto</router-link>
     </div>
     <transition>
-      <b-container id="views">
+      <b-container fluid id="views">
         <router-view />
       </b-container>
     </transition>
@@ -17,12 +17,9 @@
 export default {
   name: "App",
   data() {
-    return {
-    };
+    return {};
   },
-  watch: {
-
-  }
+  watch: {}
 };
 </script>
 
@@ -43,7 +40,7 @@ html {
 
 #views {
   margin-left: auto;
-  margin-top: 80px;
+  margin-top: 30px;
   margin-right: auto;
   margin-bottom: -5px;
   text-align: center;

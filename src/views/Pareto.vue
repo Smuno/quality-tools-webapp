@@ -2,11 +2,21 @@
   <div>
     <b-container>
       <b-row>
+        <b-button v-on:click="addRow" variant="success" size="sm">
+          Nueva Fila
+        </b-button>
+        <b-button v-on:click="deleteRow" variant="danger" size="sm">
+          Borrar Ultima Fila
+        </b-button>
+      </b-row>
+    </b-container>
+    <b-container>
+      <b-row>
         <b-col cols="5">
           <table-container v-model="tableData" :options="tableOptions" />
         </b-col>
         <b-col>
-          <graph-pareto :plotData="plotData" :layout="graphLayout" />
+          <ploty-graph :plotData="plotData" :layout="graphLayout" />
         </b-col>
       </b-row>
     </b-container>
@@ -14,8 +24,8 @@
 </template>
 
 <script>
-import TableContainer from "../components/Pareto/TableContainer";
-import GraphPareto from "../components/Pareto/GraphPareto";
+import TableContainer from "../components/Generics/TableContainer";
+import PlotyGraph from "../components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
@@ -26,7 +36,7 @@ export default {
   name: "Pareto",
   components: {
     TableContainer,
-    GraphPareto
+    PlotyGraph
   },
   data() {
     return {
@@ -36,7 +46,18 @@ export default {
       graphLayout: DEFAULT_LAYOUT
     };
   },
-  methods: {},
+  methods: {
+    addRow: function() {
+      this.tableData.push({
+        id: this.tableData.length + 1,
+        name: "",
+        value: "0"
+      });
+    },
+    deleteRow: function() {
+      this.tableData.pop();
+    }
+  },
   computed: {
     //calculo de los datos para plot con depencencia de los datos de tabla
     plotData: function() {
@@ -67,17 +88,42 @@ export default {
         if ((porcent > 80 && index == 0) || porcent <= 80)
           return parseInt(porcent);
       });
-      //porcentajes.reverse();
-      return {
-        xNames: sorted.map(el => {
-          return el.name;
-        }),
-        yBar: sorted.map(el => {
-          return parseInt(el.value);
-        }),
-        yLine: porcentajes,
-        ytopBar: top80
+      //Entregar datos listos
+
+      const xNames = sorted.map(el => {
+        return el.name;
+      });
+      const yBar = sorted.map(el => {
+        return parseInt(el.value);
+      });
+      const yLine = porcentajes;
+      /* Seteo de datos para plotear */
+      const bar = {
+        x: xNames,
+        y: yBar,
+        name: "Problemas",
+        type: "bar"
       };
+      const topbar = {
+        x: xNames,
+        y: top80,
+        mode: "markers",
+        name: "Top 80%",
+        type: "scatter",
+        yaxis: "y2",
+        marker: {
+          color: "rgb(219, 64, 82)",
+          size: 12
+        }
+      };
+      const line = {
+        x: xNames,
+        y: yLine,
+        name: "%",
+        type: "line",
+        yaxis: "y2"
+      };
+      return [bar, line, topbar];
     }
   }
 };
