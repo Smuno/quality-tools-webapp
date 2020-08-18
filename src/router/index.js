@@ -10,16 +10,19 @@ const routes = [
   {
     path: "/",
     name: "Home",
+    meta:{index:0},
     component: Home
   },
   {
     path: "/tempo",
     name: "tempo",
+    meta:{index:1},
     component: Tempo
   },
   {
     path: "/pareto",
     name: "pareto",
+    meta:{index:2},
     component: Pareto
   }
 ];

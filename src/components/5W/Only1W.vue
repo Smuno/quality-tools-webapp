@@ -196,6 +196,6 @@ export default {
   border-top-style: solid;
   border-bottom-style: solid;
   border-color: #545e63;
-  background-color: #1b998b;
+  background-color: #016fb9;
 }
 </style>

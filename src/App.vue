@@ -5,14 +5,32 @@
       <router-link to="/tempo">Tempo</router-link> |
       <router-link to="/pareto">Pareto</router-link>
     </div>
-    <router-view/>
+    <transition>
+      <b-container id="views">
+        <router-view />
+      </b-container>
+    </transition>
   </div>
 </template>
 
-<style lang="scss">
+<script>
+export default {
+  name: "App",
+  data() {
+    return {
+    };
+  },
+  watch: {
 
-html{
-  background-color: #e5f6df;
+  }
+};
+</script>
+
+<style lang="scss">
+@import "~vue-tabulator/dist/scss/bootstrap/tabulator_bootstrap4";
+
+html {
+  background-color: #f2fbef;
 }
 
 #app {
@@ -21,24 +39,28 @@ html{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: #f1faee;
+}
+
+#views {
+  margin-left: auto;
+  margin-top: 80px;
+  margin-right: auto;
+  margin-bottom: -5px;
+  text-align: center;
 }
 
 #nav {
   padding: 30px;
-
+  background-color: #1b998b;
+  border-bottom-style: solid;
+  border-color: #545e63;
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #f0f0f0;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #016fb9;
     }
   }
 }
-</style>
-<style lang='scss'>
-
-@import "~vue-tabulator/dist/scss/bootstrap/tabulator_bootstrap4";
-
 </style>

@@ -2,7 +2,7 @@
   <div>
     <b-container>
       <b-row>
-        <b-col cols="4">
+        <b-col cols="5">
           <table-container v-model="tableData" :options="tableOptions" />
         </b-col>
         <b-col>
@@ -62,17 +62,11 @@ export default {
       porcentajes = porcentajes.map(el => {
         return 100 * (el / totalValue);
       });
-      //Se dan vuelta para dejar de mayor a menor
-      let top80 = [];
-
-      porcentajes.forEach((porcent, index) => {
-        if (porcent <= 80) {
-
-          top80.push(parseInt(porcent));
-        }
+      //Calculando los mayores en el 80%
+      let top80 = porcentajes.map((porcent, index) => {
+        if ((porcent > 80 && index == 0) || porcent <= 80)
+          return parseInt(porcent);
       });
-
-      console.log(top80);
       //porcentajes.reverse();
       return {
         xNames: sorted.map(el => {
