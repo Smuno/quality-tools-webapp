@@ -1,6 +1,6 @@
 <template>
   <b-container>
-    <div ref="tester"></div>
+    <div ref="plotlyPlace"></div>
   </b-container>
 </template>
 
@@ -16,31 +16,37 @@ export default {
   data() {
     return {
       /** 
-       * Contiene instancia plotly al montar mounted()
+       * Contain instance of Plotly when component mounted
       */
       thePlot: null
     };
   },
   props: {
     /** 
-     * Data a presentar (multiArray)
+     * Data to be plot (multiArray)
     */
     plotData: {
       type: Array,
       required: true
     },
     /** 
-     * Layout del grafico
-     * Objeto
+     * Graph layout
+     * Object as described on plotly.com/javascript/layout-template/
     */
-    layout: Object
+    layout: {
+      type: Object,
+      required:true
+    }
   },
   methods: {
 
   },
   mounted() {
+    /** 
+     * Se inserta grafico en ref="plotlyPlace"
+    */
     this.thePlot = Plotly.newPlot(
-      this.$refs.tester,
+      this.$refs.plotlyPlace,
       this.plotData,
       this.layout,
       { responsive: true }
@@ -48,6 +54,11 @@ export default {
   },
   computed: {},
   watch: {
+    /** 
+     * Cuando se detecta cambios en la data, se actualiza el grafico
+     * (no se redibuja)
+     * ¿Hacerlo tambien con layout?
+    */
     plotData: function(newValue) {
       Plotly.react(this.$refs.tester, newValue, this.layout);
     }

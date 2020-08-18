@@ -16,7 +16,7 @@
           <table-container v-model="tableData" :options="tableOptions" />
         </b-col>
         <b-col>
-          <ploty-graph :plotData="plotData" :layout="graphLayout" />
+          <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
         </b-col>
       </b-row>
     </b-container>
@@ -40,14 +40,17 @@ export default {
   },
   data() {
     return {
-      //para v-model TableContainer - comienza con ejemplo
+      /**Para v-model TableContainer - comienza con ejemplo*/
       tableData: DEFAULT_TABLE,
+      /** Options to tabulator */
       tableOptions: DEFAULT_OPTION_TABLE,
-      graphLayout: DEFAULT_LAYOUT
+      /** Layout to plotly */
+      plotlyLayout: DEFAULT_LAYOUT
     };
   },
   methods: {
     addRow: function() {
+      /** Se añade nueva columna */
       this.tableData.push({
         id: this.tableData.length + 1,
         name: "",
@@ -55,6 +58,9 @@ export default {
       });
     },
     deleteRow: function() {
+      /** Se elimina ultima columna
+       * (falta dar habilidad de eligir cual eliminar)
+       */
       this.tableData.pop();
     }
   },
