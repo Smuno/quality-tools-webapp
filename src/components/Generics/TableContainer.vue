@@ -45,12 +45,12 @@ export default {
     */
     textToJson: function(tsvText) {
       var allTextLines = tsvText.split(/\r\n|\n/);
-      var headers = ["name", "value"];
+      var headers = this.options.columns.map((el)=>{
+        return el.field
+      })
       var lines = [];
-
       for (var i = 0; i < allTextLines.length; i++) {
         var data = allTextLines[i].split(/\t|,/);
-
         if (data.length == headers.length) {
           var row = {};
           for (var j = 0; j < headers.length; j++) {
@@ -65,12 +65,10 @@ export default {
   mounted() {},
   watch: {
     userTable: function(newVal) {
-      this.$emit("changeOnTable", newVal);
+      this.$emit("changeOnTable", newVal)
     },
     pastedText: function(newVal) {
-      console.log(newVal);
       if (newVal.length > 0) {
-        console.log(this.textToJson(newVal))
         this.userTable=[...this.textToJson(newVal)];
       }
       this.$refs.pasteArea.blur();

@@ -3,7 +3,8 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/tempo">Tempo</router-link> |
-      <router-link to="/pareto">Pareto</router-link>
+      <router-link to="/pareto">Pareto</router-link> |
+      <router-link to="/ControlChart">Control Chart</router-link> |
     </div>
     <transition>
       <b-container fluid id="views">

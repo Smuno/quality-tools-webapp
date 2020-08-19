@@ -29,7 +29,9 @@ const DEFAULT_OPTION_TABLE = {
   columns: [
     { field: "name", title: "Name", editor: true, widthGrow: 2 },
     { field: "value", title: "Value", editor: true, hozAlign: "center" }
-  ]
+  ],
+  //columna tipo vacia para insertar y comparar
+  emptyColumn:{name:"",value:"0"}
 };
 
 export { DEFAULT_LAYOUT, DEFAULT_TABLE,DEFAULT_OPTION_TABLE};

@@ -51,11 +51,7 @@ export default {
   methods: {
     addRow: function() {
       /** Se añade nueva columna */
-      this.tableData.push({
-        id: this.tableData.length + 1,
-        name: "",
-        value: "0"
-      });
+      this.tableData.push(DEFAULT_OPTION_TABLE.emptyColumn);
     },
     deleteRow: function() {
       /** Se elimina ultima columna
@@ -95,7 +91,6 @@ export default {
           return parseInt(porcent);
       });
       //Entregar datos listos
-
       const xNames = sorted.map(el => {
         return el.name;
       });
