@@ -60,7 +60,7 @@ export default {
      * ¿Hacerlo tambien con layout?
     */
     plotData: function(newValue) {
-      Plotly.react(this.$refs.tester, newValue, this.layout);
+      Plotly.react(this.$refs.plotlyPlace, newValue, this.layout);
     }
   }
 };

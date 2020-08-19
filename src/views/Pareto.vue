@@ -1,16 +1,16 @@
 <template>
   <div>
-    <b-container>
+    <b-container >
       <b-row>
         <b-button v-on:click="addRow" variant="success" size="sm">
-          Nueva Fila
+          New Row
         </b-button>
         <b-button v-on:click="deleteRow" variant="danger" size="sm">
-          Borrar Ultima Fila
+          Delete Last Row
         </b-button>
       </b-row>
     </b-container>
-    <b-container>
+    <b-container >
       <b-row>
         <b-col cols="5">
           <table-container v-model="tableData" :options="tableOptions" />
