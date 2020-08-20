@@ -2,16 +2,6 @@
   <div>
     <b-container>
       <b-row>
-        <b-button v-on:click="addRow" variant="success" size="sm">
-          New Row
-        </b-button>
-        <b-button v-on:click="deleteRow" variant="danger" size="sm">
-          Delete Last Row
-        </b-button>
-      </b-row>
-    </b-container>
-    <b-container>
-      <b-row>
         <b-col cols="5">
           <table-container v-model="tableData" :options="tableOptions" />
         </b-col>
@@ -53,19 +43,7 @@ export default {
     };
   },
   methods: {
-    addRow: function() {
-      /** Se añade nueva columna */
-      this.tableData.push({
-        name: "",
-        value: "0"
-      });
-    },
-    deleteRow: function() {
-      /** Se elimina ultima columna
-       * (falta dar habilidad de eligir cual eliminar)
-       */
-      this.tableData.pop();
-    }
+    
   },
   computed: {
     //calculo de los datos para plot con depencencia de los datos de tabla
@@ -73,39 +51,39 @@ export default {
       const yLine = this.tableData.map(el => {
         return parseFloat(el.value);
       });
-      const comments=this.tableData.map((el)=>{
-        return el.name
-      })
+      const comments = this.tableData.map(el => {
+        return el.name;
+      });
 
       const mean = math.mean(yLine);
       const standardDeviation = math.std(yLine);
       const xBordes = [-2, yLine.length];
 
-      const xViolation=[]
-      const yViolation=[]
+      const xViolation = [];
+      const yViolation = [];
 
-      yLine.forEach((value,index)=>{
-        if(value>(3*standardDeviation+mean)){
-          xViolation.push(index)
-          yViolation.push(value)
+      yLine.forEach((value, index) => {
+        if (value > 3 * standardDeviation + mean) {
+          xViolation.push(index);
+          yViolation.push(value);
         }
-      })
+      });
 
       const characteristicLine = {
         name: "Characteristic",
         type: "scatter",
         y: yLine,
-        text:comments,
-        textposition: 'top',
-        mode:'lines+markers',
-        line:{
-          color:'#016fb9',
-          width:2
+        text: comments,
+        textposition: "top",
+        mode: "lines+markers",
+        line: {
+          color: "#016fb9",
+          width: 2
         },
-        marker:{
-          color:'#016fb9',
-          size:8,
-          symbol:'circle'
+        marker: {
+          color: "#016fb9",
+          size: 8,
+          symbol: "circle"
         }
       };
       const meanLine = {
@@ -114,65 +92,71 @@ export default {
         name: "Mean",
         type: "scatter",
         mode: "lines",
-        line:{
-          color:'#545E63',
-          width:2
-        },
+        line: {
+          color: "#545E63",
+          width: 2
+        }
       };
-      const upOneDeviation={
-        x:xBordes,
-        y:[standardDeviation+mean,standardDeviation+mean],
+      const upOneDeviation = {
+        x: xBordes,
+        y: [standardDeviation + mean, standardDeviation + mean],
         name: "1σ",
         type: "scatter",
         mode: "lines",
-        line:{
-          color:'#e9c46a',
-          width:2,
-          dash:'dash'
+        line: {
+          color: "#e9c46a",
+          width: 2,
+          dash: "dash"
         }
-      }
-      const upTwoDeviation={
-        x:xBordes,
-        y:[2*standardDeviation+mean,2*standardDeviation+mean],
+      };
+      const upTwoDeviation = {
+        x: xBordes,
+        y: [2 * standardDeviation + mean, 2 * standardDeviation + mean],
         name: "2σ",
         type: "scatter",
         mode: "lines",
-        line:{
-          color:'#f4a261',
-          width:2,
-          dash:'dash'
+        line: {
+          color: "#f4a261",
+          width: 2,
+          dash: "dash"
         }
-      }
-      const upThreeDeviation={
-        x:xBordes,
-        y:[3*standardDeviation+mean,3*standardDeviation+mean],
+      };
+      const upThreeDeviation = {
+        x: xBordes,
+        y: [3 * standardDeviation + mean, 3 * standardDeviation + mean],
         name: "3σ",
         type: "scatter",
         mode: "lines",
-        line:{
-          color:'#e76f51',
-          width:2,
-          dash:'dash'
+        line: {
+          color: "#e76f51",
+          width: 2,
+          dash: "dash"
         }
-      }
+      };
 
-      const violationMarker={
-        x:xViolation,
-        y:yViolation,
-        name:'Violations',
-        mode:'markers',
-        type:'scatter',
-        marker:{
-          color:'#CC2936',
-          size:14,
-          symbol:'diamond'
+      const violationMarker = {
+        x: xViolation,
+        y: yViolation,
+        name: "Violations",
+        mode: "markers",
+        type: "scatter",
+        marker: {
+          color: "#CC2936",
+          size: 14,
+          symbol: "diamond"
         }
-      }
+      };
 
-      return [meanLine,upThreeDeviation,upTwoDeviation,upOneDeviation,characteristicLine,violationMarker,];
+      return [
+        meanLine,
+        upThreeDeviation,
+        upTwoDeviation,
+        upOneDeviation,
+        characteristicLine,
+        violationMarker
+      ];
     }
   },
-  mounted() {
-  }
+  mounted() {}
 };
 </script>
