@@ -1,31 +1,29 @@
 <template>
-  <div>
-    <b-container >
-      <b-row>
-        <b-button v-on:click="addRow" variant="success" size="sm">
-          New Row
-        </b-button>
-        <b-button v-on:click="deleteRow" variant="danger" size="sm">
-          Delete Last Row
-        </b-button>
-      </b-row>
-    </b-container>
-    <b-container >
-      <b-row>
-        <b-col cols="5">
-          <table-container v-model="tableData" :options="tableOptions" />
-        </b-col>
-        <b-col>
-          <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
-        </b-col>
-      </b-row>
-    </b-container>
-  </div>
+  <b-container>
+    <b-row>
+      <b-col cols="5">
+        <b-navbar variant="info" type="dark" :sticky="true">
+          <b-button v-on:click="addRow" variant="success" size="sm">
+            New Row
+          </b-button>
+          <b-button v-on:click="deleteRow" variant="danger" size="sm">
+            Delete Last Row
+          </b-button>
+        </b-navbar>
+        <table-tabulator v-model="tableData" :options="tableOptions" />
+        <TextAreaData2JSON @pasted-data="tableData = $event" />
+      </b-col>
+      <b-col>
+        <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
-import TableContainer from "../components/Generics/TableContainer";
+import TableTabulator from "../components/Generics/TableTabulator";
 import PlotyGraph from "../components/Generics/PlotyGraph";
+import TextAreaData2JSON from "../components/Generics/TextAreaData2JSON";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
@@ -35,8 +33,9 @@ import {
 export default {
   name: "Pareto",
   components: {
-    TableContainer,
-    PlotyGraph
+    TableTabulator,
+    PlotyGraph,
+    TextAreaData2JSON
   },
   data() {
     return {
@@ -51,7 +50,7 @@ export default {
   methods: {
     addRow: function() {
       /** Se añade nueva columna */
-      this.tableData.push(DEFAULT_OPTION_TABLE.emptyColumn);
+      this.tableData.push({ x0: "", x1: "" });
     },
     deleteRow: function() {
       /** Se elimina ultima columna
@@ -62,20 +61,21 @@ export default {
   },
   computed: {
     //calculo de los datos para plot con depencencia de los datos de tabla
+    // x0: Name / x2:value
     plotData: function() {
       //entregar ordenado de mayor a menor
       let sorted = [...this.tableData].sort((a, b) => {
-        return parseInt(b.value) - parseInt(a.value);
+        return parseInt(b.x1) - parseInt(a.x1);
       });
       /*calcular porcentajes - line*/
       //Suma de todos los valores
       const totalValue = [...sorted].reduce((a, b) => {
-        return parseInt(a) + parseInt(b.value);
+        return parseInt(a) + parseInt(b.x1);
       }, 0);
       //Calculo de valores acumulados de menor a mayor
       let porcentajes = [...sorted].reduce(
         (a, b) => {
-          return a.concat(parseInt(a.slice(-1)) + parseInt(b.value));
+          return a.concat(parseInt(a.slice(-1)) + parseInt(b.x1));
         },
         [0]
       );
@@ -92,10 +92,10 @@ export default {
       });
       //Entregar datos listos
       const xNames = sorted.map(el => {
-        return el.name;
+        return el.x0;
       });
       const yBar = sorted.map(el => {
-        return parseInt(el.value);
+        return parseInt(el.x1);
       });
       const yLine = porcentajes;
       /* Seteo de datos para plotear */
@@ -124,6 +124,7 @@ export default {
         type: "line",
         yaxis: "y2"
       };
+      console.log([bar, line, topbar]);
       return [bar, line, topbar];
     }
   }

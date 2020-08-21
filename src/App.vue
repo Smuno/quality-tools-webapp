@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "~vue-tabulator/dist/scss/bootstrap/tabulator_bootstrap4";
+
 
 html {
   background-color: #f2fbef;

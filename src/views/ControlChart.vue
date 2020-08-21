@@ -1,21 +1,38 @@
 <template>
-  <div>
-    <b-container>
-      <b-row>
-        <b-col cols="5">
-          <table-container v-model="tableData" :options="tableOptions" />
-        </b-col>
-        <b-col>
-          <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
-        </b-col>
-      </b-row>
-    </b-container>
-  </div>
+  <b-container>
+    <b-row>
+      <b-col>
+        <!-- <b-navbar variant="info" type="dark" :sticky="true">
+            <b-form-input
+              v-model="sampleSize"
+              size="sm"
+              type="number"
+              class="mr-sm-2"
+              placeholder="Tamaño muestral"
+            ></b-form-input>
+          </b-navbar> -->
+        <b-navbar variant="info" type="dark" :sticky="true">
+          <b-button @click="newRow" size="sm">Add Row</b-button>
+          <b-button @click="deleteRow" variant="danger" size="sm"
+            >Delete Row</b-button
+          >
+          <b-button variant="warning" size="sm">Delete Selected Row</b-button>
+          <b-form-input></b-form-input>
+        </b-navbar>
+        <table-tabulator v-model="tableData" :options="tableOptions" />
+        <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
+      </b-col>
+      <b-col>
+        <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
-import TableContainer from "../components/Generics/TableContainer";
-import PlotyGraph from "../components/Generics/PlotyGraph";
+import TableTabulator from "../components/Generics/TableTabulator";
+import TextAreaData2JSON from "../components/Generics/TextAreaData2JSON";
+import PlotlyGraph from "../components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
@@ -29,8 +46,9 @@ const math = create(all);
 export default {
   name: "ControlChart",
   components: {
-    TableContainer,
-    PlotyGraph
+    TableTabulator,
+    TextAreaData2JSON,
+    PlotlyGraph
   },
   data() {
     return {
@@ -40,123 +58,58 @@ export default {
       tableOptions: DEFAULT_OPTION_TABLE,
       /** Layout to plotly */
       plotlyLayout: DEFAULT_LAYOUT
+      /**
+       * Tamaño de la muestra - para crear columnas
+       */
     };
   },
   methods: {
-    
-  },
-  computed: {
-    //calculo de los datos para plot con depencencia de los datos de tabla
-    plotData: function() {
-      const yLine = this.tableData.map(el => {
-        return parseFloat(el.value);
-      });
-      const comments = this.tableData.map(el => {
-        return el.name;
-      });
-
-      const mean = math.mean(yLine);
-      const standardDeviation = math.std(yLine);
-      const xBordes = [-2, yLine.length];
-
-      const xViolation = [];
-      const yViolation = [];
-
-      yLine.forEach((value, index) => {
-        if (value > 3 * standardDeviation + mean) {
-          xViolation.push(index);
-          yViolation.push(value);
-        }
+    //crear evento para añadir columnas
+    newRow: function() {
+      this.tableData.push({});
+    },
+    deleteRow: function() {
+      this.tableData.pop();
+    },
+    deleteSelectedRows: function() {},
+    EVENTtextArea: function(eventData) {
+      /**
+       * Ante llegada de datos copiados de excel (textareadata2json)
+       */
+      eventData.forEach((el, index) => {
+        eventData[index].id = "S" + index;
       });
 
-      const characteristicLine = {
-        name: "Characteristic",
-        type: "scatter",
-        y: yLine,
-        text: comments,
-        textposition: "top",
-        mode: "lines+markers",
-        line: {
-          color: "#016fb9",
-          width: 2
-        },
-        marker: {
-          color: "#016fb9",
-          size: 8,
-          symbol: "circle"
-        }
-      };
-      const meanLine = {
-        x: xBordes,
-        y: [mean, mean],
-        name: "Mean",
-        type: "scatter",
-        mode: "lines",
-        line: {
-          color: "#545E63",
-          width: 2
-        }
-      };
-      const upOneDeviation = {
-        x: xBordes,
-        y: [standardDeviation + mean, standardDeviation + mean],
-        name: "1σ",
-        type: "scatter",
-        mode: "lines",
-        line: {
-          color: "#e9c46a",
-          width: 2,
-          dash: "dash"
-        }
-      };
-      const upTwoDeviation = {
-        x: xBordes,
-        y: [2 * standardDeviation + mean, 2 * standardDeviation + mean],
-        name: "2σ",
-        type: "scatter",
-        mode: "lines",
-        line: {
-          color: "#f4a261",
-          width: 2,
-          dash: "dash"
-        }
-      };
-      const upThreeDeviation = {
-        x: xBordes,
-        y: [3 * standardDeviation + mean, 3 * standardDeviation + mean],
-        name: "3σ",
-        type: "scatter",
-        mode: "lines",
-        line: {
-          color: "#e76f51",
-          width: 2,
-          dash: "dash"
-        }
-      };
+      //crear nueva definicion de columnas y setear
+      const columnsNames = Object.keys(eventData[0]);
+      let newColumns = [];
 
-      const violationMarker = {
-        x: xViolation,
-        y: yViolation,
-        name: "Violations",
-        mode: "markers",
-        type: "scatter",
-        marker: {
-          color: "#CC2936",
-          size: 14,
-          symbol: "diamond"
-        }
-      };
-
-      return [
-        meanLine,
-        upThreeDeviation,
-        upTwoDeviation,
-        upOneDeviation,
-        characteristicLine,
-        violationMarker
-      ];
+      columnsNames.forEach((el, index) => {
+        newColumns.push({ field: el, title: el, editor: true });
+      });
+      newColumns.unshift(newColumns.pop());
+      this.tableOptions.columns = newColumns;
+      //setear nuevos datos (eventData) a tableData
+      this.tableData = eventData;
+    },
+    CALLBACKrowSelected: function(data, rows) {
+      console.log("data: ", data);
+      console.log("rows: ", rows);
     }
   },
-  mounted() {}
+  computed: {
+    plotData: function() {
+      //Elegir metodo segun tamaño muestral (tableData[0].length-1)
+        //¿Entregar metodos aparte?
+      //Calcular linea proceso
+      //calcular linea central
+      //calcular UCL y DCL
+    }
+  },
+  watch: {},
+  mounted() {
+    console.log("adding callback");
+    this.tableOptions.rowSelected = this.CALLBACKrowSelected;
+  }
 };
 </script>

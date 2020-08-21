@@ -1,6 +1,6 @@
 const DEFAULT_TABLE = [
-  { name: "Cables rotos", value: 22 },
-  { name: "Sin materiales", value: 10 }
+  { x0: "Cables rotos", x1: 22 },
+  { x0: "Sin materiales", x1: 10 }
 ];
 
 const DEFAULT_LAYOUT = {
@@ -27,11 +27,9 @@ const DEFAULT_OPTION_TABLE = {
   layout: "fitColumns",
   height: "400px",
   columns: [
-    { field: "name", title: "Name", editor: true, widthGrow: 2 },
-    { field: "value", title: "Value", editor: true, hozAlign: "center" }
+    { field: "x0", title: "Name", editor: true, widthGrow: 2 },
+    { field: "x1", title: "Value", editor: true, hozAlign: "center" }
   ],
-  //columna tipo vacia para insertar y comparar
-  emptyColumn:{name:"",value:"0"}
 };
 
 export { DEFAULT_LAYOUT, DEFAULT_TABLE,DEFAULT_OPTION_TABLE};
