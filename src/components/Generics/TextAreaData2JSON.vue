@@ -46,7 +46,6 @@ export default {
           lines.push(row);
         }
       }
-      console.log('lines: ',lines)
       return lines;
     }
   },

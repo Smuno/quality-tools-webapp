@@ -1,40 +1,42 @@
 <template>
-  <b-container>
+  <b-container fluid>
+    <b-navbar variant="info" type="dark" :sticky="true">
+      <b-button @click="newRow" size="sm">Add Row</b-button>
+      <b-button @click="deleteRow" variant="danger" size="sm"
+        >Delete Row</b-button
+      >
+      <b-button variant="warning" size="sm">Delete Selected Row</b-button>
+      <b-col cols="4">
+        <b-form-select
+          v-model="chartType"
+          :options="[
+            { value: null, text: 'Select Chart Type' },
+            { value: 'XR', text: 'Chart X-R Ranges' },
+            { value: 'XS', text: 'Chart X-S Standar Deviation' }
+          ]"
+        ></b-form-select>
+      </b-col>
+    </b-navbar>
     <b-row>
-      <b-col>
-        <!-- <b-navbar variant="info" type="dark" :sticky="true">
-            <b-form-input
-              v-model="sampleSize"
-              size="sm"
-              type="number"
-              class="mr-sm-2"
-              placeholder="Tamaño muestral"
-            ></b-form-input>
-          </b-navbar> -->
-        <b-navbar variant="info" type="dark" :sticky="true">
-          <b-button @click="newRow" size="sm">Add Row</b-button>
-          <b-button @click="deleteRow" variant="danger" size="sm"
-            >Delete Row</b-button
-          >
-          <b-button variant="warning" size="sm">Delete Selected Row</b-button>
-          <b-form-input></b-form-input>
-        </b-navbar>
+      <b-col cols="4">
         <table-tabulator v-model="tableData" :options="tableOptions" />
         <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
       </b-col>
-    </b-row>
-    <b-row>
       <b-col>
-        <PlotlyGraph
-          ref="ProcessAverage"
-          :plotData="plotData.average"
-          :layout="plotlyLayout"
-        />
-        <!-- <ploty-graph
-          ref="ProcessVariability"
-          :plotData="plotData.variability"
-          :layout="plotlyLayout"
-        /> -->
+        <b-row>
+          <PlotlyGraph
+            ref="ProcessAverage"
+            :plotData="plotData.average"
+            :layout="plotlyLayout.average"
+          />
+        </b-row>
+        <b-row>
+          <PlotlyGraph
+            ref="ProcessVariability"
+            :plotData="plotData.variability"
+            :layout="plotlyLayout.variability"
+          />
+        </b-row>
       </b-col>
     </b-row>
   </b-container>
@@ -69,10 +71,8 @@ export default {
       /** Options to tabulator */
       tableOptions: DEFAULT_OPTION_TABLE,
       /** Layout to plotly */
-      plotlyLayout: DEFAULT_LAYOUT
-      /**
-       * Tamaño de la muestra - para crear columnas
-       */
+      plotlyLayout: DEFAULT_LAYOUT,
+      chartType: "XR"
     };
   },
   methods: {
@@ -83,6 +83,7 @@ export default {
     deleteRow: function() {
       this.tableData.pop();
     },
+    // TODO borrar filas seleccionadas
     deleteSelectedRows: function() {},
     EVENTtextArea: function(eventData) {
       /**
@@ -123,7 +124,6 @@ export default {
           return parseFloat(el);
         });
       });
-      console.log(dataAsArray);
       const sampleSize = dataAsArray[0].length;
 
       //* meanRows es array de floats de promedios x̄
@@ -140,31 +140,52 @@ export default {
         meanRows.reduce((acc, current) => {
           return acc + current;
         }) / meanRows.length;
-      const xBordes = [-1, dataAsArray.length + 1];
 
-      const range_RChart = math.mean(
-        dataAsArray.map(el => {
-          return math.max(el) - math.min(el);
-        })
-      );
+      const range_RChart = dataAsArray.map(el => {
+        return math.max(el) - math.min(el);
+      });
+
       const range_average_RChart = math.mean(range_RChart);
-      {
-        //!   Falta considerar caso n=1
-        /*   Para carta de promedios todos tiene la forma
-         *    Center Line = ̿x (promedio de promedios)
-         *    UCL (LCL)=  ̿x ± distance * desviation
-         *    distance puede ser A2 (para x-R) o A3 (para x-s)
-         */
-        /*   Para carta de desviacion todos tienen la forma
-         *    Center Line = meanDeviation (promedio de desviaciones)
-         *    UCL (LCL) = distance * meanDeviation
-         *    D4 y D3 para UCL y LCL (para x-R)
-         *    B4 y B3 para UCL y LCL (para x-s)
-         */
+
+      const variance_SChart = dataAsArray.map((row, index) => {
+        return ((
+          row.reduce((acc, current) => {
+            return acc + (current - meanRows[index]) ** 2;
+          }, 0) /
+          (sampleSize - 1)
+        )**(1/2));
+      })
+
+      const variance_average_SChart=math.mean(variance_SChart)
+
+      const desviation={
+        XR:range_RChart,
+        XS:variance_SChart
       }
+      const average_desviation ={
+        XR:range_average_RChart,
+        XS:variance_average_SChart
+      }
+
+      //!   Falta considerar caso n=1
+      /*   Para carta de promedios todos tiene la forma
+       *    Center Line = ̿x (promedio de promedios)
+       *    UCL (LCL)=  ̿x ± distance * desviation
+       *    distance puede ser A2 (para x-R) o A3 (para x-s)
+       */
+      /*   Para carta de desviacion todos tienen la forma
+       *    Center Line = meanDeviation (promedio de desviaciones)
+       *    UCL (LCL) = distance * meanDeviation
+       *    D4 y D3 para UCL y LCL (para x-R)
+       *    B4 y B3 para UCL y LCL (para x-s)
+       */
       //TODO  Cases for samplesize n=1 and n>25
+      //Bordes del grafico
+      const xBordes = [-1, dataAsArray.length + 1];
+      //Factores para graficos
       const factors = factorsControlCharts(sampleSize);
 
+      console.log('deviation for this chart',average_desviation[this.chartType])
       // Formar linea average plot proceso
       const averageProcess = {
         name: "Characteristic",
@@ -199,8 +220,8 @@ export default {
       const averageUCL = {
         x: xBordes,
         y: [
-          meanAllRows + factors["XR"].fProcess * range_average_RChart,
-          meanAllRows + factors["XR"].fProcess * range_average_RChart
+          meanAllRows + factors[this.chartType].fProcess * average_desviation[this.chartType],
+          meanAllRows + factors[this.chartType].fProcess * average_desviation[this.chartType]
         ],
         name: "UCL",
         type: "scatter",
@@ -211,11 +232,14 @@ export default {
           dash: "dash"
         }
       };
+
+      console.log("factor: ");
+
       const averageLCL = {
         x: xBordes,
         y: [
-          meanAllRows - factors["XR"].fProcess * range_average_RChart,
-          meanAllRows - factors["XR"].fProcess * range_average_RChart
+          meanAllRows - factors[this.chartType].fProcess * average_desviation[this.chartType],
+          meanAllRows - factors[this.chartType].fProcess * average_desviation[this.chartType]
         ],
         name: "LCL",
         type: "scatter",
@@ -231,7 +255,7 @@ export default {
       const variabilityProcess = {
         name: "Variability Process",
         type: "scatter",
-        y: range_RChart,
+        y: desviation[this.chartType],
         mode: "lines+markers",
         line: {
           color: "#016fb9",
@@ -247,7 +271,7 @@ export default {
       //Formar linea variability plot central
       const variabilityCenterLine = {
         x: xBordes,
-        y: [range_average_RChart, range_average_RChart],
+        y: [average_desviation[this.chartType], average_desviation[this.chartType]],
         name: "Average Range",
         type: "scatter",
         mode: "lines",
@@ -260,8 +284,8 @@ export default {
       const variabilityUCL = {
         x: xBordes,
         y: [
-          factors["XR"].fUCL * range_average_RChart,
-          factors["XR"].fUCL * range_average_RChart
+          factors[this.chartType].fUCL * average_desviation[this.chartType],
+          factors[this.chartType].fUCL * average_desviation[this.chartType]
         ],
         name: "UCL",
         type: "scatter",
@@ -275,8 +299,8 @@ export default {
       const variabilityLCL = {
         x: xBordes,
         y: [
-          factors["XR"].fLCL * range_average_RChart,
-          factors["XR"].fLCL * range_average_RChart
+          factors[this.chartType].fLCL * average_desviation[this.chartType],
+          factors[this.chartType].fLCL * average_desviation[this.chartType]
         ],
         name: "UCL",
         type: "scatter",
