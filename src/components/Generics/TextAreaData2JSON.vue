@@ -10,9 +10,9 @@
 </template>
 
 <script>
-/** 
-*Transforma datos pegados desde excel hacia JSON
-*/
+/**
+ *Transforma datos pegados desde excel hacia JSON
+ */
 
 //Evento pasted-data
 export default {
@@ -27,12 +27,13 @@ export default {
   },
   methods: {
     textToJson: function(tsvText) {
+      tsvText = tsvText.replace(/,/g,'.')
       var allTextLines = tsvText.split(/\r\n|\n/);
       //Split per line on tabs and commas
       var headers = allTextLines[0].split(/\t|,/);
-      headers=headers.map((el,index)=>{
-        return'x'+index
-      })
+      headers = headers.map((el, index) => {
+        return "x" + index;
+      });
       var lines = [];
       for (var i = 0; i < allTextLines.length; i++) {
         var data = allTextLines[i].split(/\t|,/);
@@ -45,14 +46,14 @@ export default {
           lines.push(row);
         }
       }
-
+      console.log('lines: ',lines)
       return lines;
     }
   },
   watch: {
     pastedText: function(newVal) {
       if (newVal.length > 0) {
-        this.$emit('pasted-data',this.textToJson(newVal))
+        this.$emit("pasted-data", this.textToJson(newVal));
       }
       setTimeout(() => {
         this.$refs.pasteArea.blur();

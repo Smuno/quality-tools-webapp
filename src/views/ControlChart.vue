@@ -22,8 +22,19 @@
         <table-tabulator v-model="tableData" :options="tableOptions" />
         <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
       </b-col>
+    </b-row>
+    <b-row>
       <b-col>
-        <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
+        <PlotlyGraph
+          ref="ProcessAverage"
+          :plotData="plotData.average"
+          :layout="plotlyLayout"
+        />
+        <!-- <ploty-graph
+          ref="ProcessVariability"
+          :plotData="plotData.variability"
+          :layout="plotlyLayout"
+        /> -->
       </b-col>
     </b-row>
   </b-container>
@@ -38,6 +49,7 @@ import {
   DEFAULT_TABLE,
   DEFAULT_OPTION_TABLE
 } from "../components/ControlChart/ControlChartConfig";
+import { factorsControlCharts } from "../components/ControlChart/FactorsControlCharts";
 
 import { create, all } from "mathjs";
 
@@ -93,22 +105,201 @@ export default {
       this.tableData = eventData;
     },
     CALLBACKrowSelected: function(data, rows) {
-      console.log("data: ", data);
-      console.log("rows: ", rows);
+      // console.log("data: ", data);
+      // console.log("rows: ", rows);
     }
   },
   computed: {
     plotData: function() {
-      //Elegir metodo segun tamaño muestral (tableData[0].length-1)
-        //¿Entregar metodos aparte?
-      //Calcular linea proceso
-      //calcular linea central
-      //calcular UCL y DCL
+      //$ Tamaño muestral - Solo se considera caso de tamaño muestral igual
+
+      const idRows = [...this.tableData].map(rowObj => {
+        return rowObj.id;
+      });
+      const dataAsArray = [...this.tableData].map(rowObj => {
+        const rowValues = Object.values(rowObj);
+        rowValues.pop();
+        return rowValues.map(el => {
+          return parseFloat(el);
+        });
+      });
+      console.log(dataAsArray);
+      const sampleSize = dataAsArray[0].length;
+
+      //* meanRows es array de floats de promedios x̄
+      const meanRows = dataAsArray.map(el => {
+        return (
+          el.reduce((acc, current) => {
+            return acc + parseFloat(current);
+          }, 0) / sampleSize
+        );
+      });
+
+      //* meanAllRows es float de ̿x
+      const meanAllRows =
+        meanRows.reduce((acc, current) => {
+          return acc + current;
+        }) / meanRows.length;
+      const xBordes = [-1, dataAsArray.length + 1];
+
+      const range_RChart = math.mean(
+        dataAsArray.map(el => {
+          return math.max(el) - math.min(el);
+        })
+      );
+      const range_average_RChart = math.mean(range_RChart);
+      {
+        //!   Falta considerar caso n=1
+        /*   Para carta de promedios todos tiene la forma
+         *    Center Line = ̿x (promedio de promedios)
+         *    UCL (LCL)=  ̿x ± distance * desviation
+         *    distance puede ser A2 (para x-R) o A3 (para x-s)
+         */
+        /*   Para carta de desviacion todos tienen la forma
+         *    Center Line = meanDeviation (promedio de desviaciones)
+         *    UCL (LCL) = distance * meanDeviation
+         *    D4 y D3 para UCL y LCL (para x-R)
+         *    B4 y B3 para UCL y LCL (para x-s)
+         */
+      }
+      //TODO  Cases for samplesize n=1 and n>25
+      const factors = factorsControlCharts(sampleSize);
+
+      // Formar linea average plot proceso
+      const averageProcess = {
+        name: "Characteristic",
+        type: "scatter",
+        y: meanRows,
+        text: idRows,
+        textposition: "top",
+        mode: "lines+markers",
+        line: {
+          color: "#016fb9",
+          width: 2
+        },
+        marker: {
+          color: "#016fb9",
+          size: 8,
+          symbol: "circle"
+        }
+      };
+      //Formar linea average plot central
+      const averageCenterLine = {
+        x: xBordes,
+        y: [meanAllRows, meanAllRows],
+        name: "Average Process",
+        type: "scatter",
+        mode: "lines",
+        line: {
+          color: "#545E63",
+          width: 2
+        }
+      };
+      //Formar linea average plot UCL y LCL
+      const averageUCL = {
+        x: xBordes,
+        y: [
+          meanAllRows + factors["XR"].fProcess * range_average_RChart,
+          meanAllRows + factors["XR"].fProcess * range_average_RChart
+        ],
+        name: "UCL",
+        type: "scatter",
+        mode: "lines",
+        line: {
+          color: "#e9c46a",
+          width: 2,
+          dash: "dash"
+        }
+      };
+      const averageLCL = {
+        x: xBordes,
+        y: [
+          meanAllRows - factors["XR"].fProcess * range_average_RChart,
+          meanAllRows - factors["XR"].fProcess * range_average_RChart
+        ],
+        name: "LCL",
+        type: "scatter",
+        mode: "lines",
+        line: {
+          color: "#e9c46a",
+          width: 2,
+          dash: "dash"
+        }
+      };
+      //
+      //Formar linea variability plot proceso
+      const variabilityProcess = {
+        name: "Variability Process",
+        type: "scatter",
+        y: range_RChart,
+        mode: "lines+markers",
+        line: {
+          color: "#016fb9",
+          width: 2
+        },
+        marker: {
+          color: "#016fb9",
+          size: 8,
+          symbol: "circle"
+        }
+      };
+      //
+      //Formar linea variability plot central
+      const variabilityCenterLine = {
+        x: xBordes,
+        y: [range_average_RChart, range_average_RChart],
+        name: "Average Range",
+        type: "scatter",
+        mode: "lines",
+        line: {
+          color: "#545E63",
+          width: 2
+        }
+      };
+      // Formar linea variability plot UCL y LCL
+      const variabilityUCL = {
+        x: xBordes,
+        y: [
+          factors["XR"].fUCL * range_average_RChart,
+          factors["XR"].fUCL * range_average_RChart
+        ],
+        name: "UCL",
+        type: "scatter",
+        mode: "lines",
+        line: {
+          color: "#e9c46a",
+          width: 2,
+          dash: "dash"
+        }
+      };
+      const variabilityLCL = {
+        x: xBordes,
+        y: [
+          factors["XR"].fLCL * range_average_RChart,
+          factors["XR"].fLCL * range_average_RChart
+        ],
+        name: "UCL",
+        type: "scatter",
+        mode: "lines",
+        line: {
+          color: "#e9c46a",
+          width: 2,
+          dash: "dash"
+        }
+      };
+      return {
+        average: [averageProcess, averageCenterLine, averageUCL, averageLCL],
+        variability: [
+          variabilityProcess,
+          variabilityCenterLine,
+          variabilityUCL,
+          variabilityLCL
+        ]
+      };
     }
   },
   watch: {},
   mounted() {
-    console.log("adding callback");
     this.tableOptions.rowSelected = this.CALLBACKrowSelected;
   }
 };

@@ -32,7 +32,6 @@ export default {
       /**
        * Funcion Callback cuando ocurre cambio en celda (options.cellEdited(callback(cell)))
        */
-      console.log("row updated");
       // Ante un cambio en la tabla se emite alerta con los datos hacia el padre
       this.$emit("changeOnTable", this.table.getData());
     }
@@ -48,7 +47,6 @@ export default {
     tableData: {
       deep: true,
       handler: function(newValue) {
-        console.log("change on table Data");
         this.$emit("changeOnTable", newValue);
         this.table.replaceData(newValue);
       }
@@ -56,7 +54,6 @@ export default {
     options: {
       deep: true,
       handler: function(newValue) {
-        console.log("change on options");
         this.table.setColumns(newValue.columns);
       }
     }

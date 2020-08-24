@@ -57,7 +57,7 @@ export default {
     /** 
      * Cuando se detecta cambios en la data, se actualiza el grafico
      * (no se redibuja)
-     * ¿Hacerlo tambien con layout?
+     * ? ¿Hacerlo tambien con layout?
     */
     plotData: function(newValue) {
       Plotly.react(this.$refs.plotlyPlace, newValue, this.layout);

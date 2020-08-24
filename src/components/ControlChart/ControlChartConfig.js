@@ -112,7 +112,7 @@
 
 
 const DEFAULT_TABLE = [
-  { id: "R0", x0: "2" },
+  { id: "R0", x0: "2",x1:"4" },
 ];
 
 const DEFAULT_LAYOUT = {
@@ -135,7 +135,8 @@ const DEFAULT_OPTION_TABLE = {
   responsiveLayout:"hide",
   columns: [
     { field: "id", title: "id", hozAlign: "center" },
-    { field: "x0", title: "x0", editor: true, widthGrow: 2, hozAlign: "center" }
+    { field: "x0", title: "x0", editor: true, widthGrow: 2, hozAlign: "center" },
+    { field: "x1", title: "x1", editor: true, widthGrow: 2, hozAlign: "center" }
   ],
   //columna tipo vacia para insertar y comparar
 };
