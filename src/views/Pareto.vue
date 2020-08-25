@@ -50,7 +50,7 @@ export default {
   methods: {
     addRow: function() {
       /** Se añade nueva columna */
-      this.tableData.push({ x0: "", x1: "" });
+      this.tableData.push({ });
     },
     deleteRow: function() {
       /** Se elimina ultima columna
