@@ -4,7 +4,6 @@
       :levelCol="esteNivel"
       :yourLevel="inicio"
       :amIaChild="false"
-      :need-newrow="nadanarinas"
       :key="'theGrandFather'"
       v-on:data-updated="allData=$event"
     />
@@ -27,9 +26,6 @@ export default {
     };
   },
   methods: {
-    nadanarinas: function() {
-      console.log("in The5W");
-    }
   },
   computed: {}
 };

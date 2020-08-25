@@ -7,11 +7,13 @@
 <script>
 // @ is an alias to /src
 import TheLotAcceptance from "../components/Quality/TheLotAcceptance.vue"
+import TableTabulator from "../components/Generics/TableTabulator"
 
 export default {
   name: 'Home',
   components:{
-    TheLotAcceptance
+    TheLotAcceptance,
+    TableTabulator
   },
   data(){
     return{

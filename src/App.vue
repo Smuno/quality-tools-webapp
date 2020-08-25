@@ -3,16 +3,32 @@
     <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/tempo">Tempo</router-link> |
-      <router-link to="/pareto">Pareto</router-link>
+      <router-link to="/pareto">Pareto</router-link> |
+      <router-link to="/ControlChart">Control Chart</router-link> |
     </div>
-    <router-view/>
+    <transition>
+      <b-container fluid id="views">
+        <router-view />
+      </b-container>
+    </transition>
   </div>
 </template>
 
+<script>
+export default {
+  name: "App",
+  data() {
+    return {};
+  },
+  watch: {}
+};
+</script>
+
 <style lang="scss">
 
-html{
-  background-color: #e5f6df;
+
+html {
+  background-color: #f2fbef;
 }
 
 #app {
@@ -21,24 +37,28 @@ html{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: #f1faee;
+}
+
+#views {
+  margin-left: auto;
+  margin-top: 30px;
+  margin-right: auto;
+  margin-bottom: -5px;
+  text-align: center;
 }
 
 #nav {
   padding: 30px;
-
+  background-color: #1b998b;
+  border-bottom-style: solid;
+  border-color: #545e63;
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #f0f0f0;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #016fb9;
     }
   }
 }
-</style>
-<style lang='scss'>
-
-@import "~vue-tabulator/dist/scss/bootstrap/tabulator_bootstrap4";
-
 </style>
