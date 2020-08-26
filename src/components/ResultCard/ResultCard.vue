@@ -2,7 +2,7 @@
   <b-card no-body>
     <!--  -->
     <b-card-header>
-      <h1>{{ header.title }}</h1>
+      <h2>{{ header.title }}</h2>
       <b-badge
         v-for="(badge, index) in header.badges"
         :key="index"
@@ -28,20 +28,19 @@ export default {
   props: {
     header: {
       type: Object,
-      default: {
+      default: () => ({
         title: "Sin titulo",
         badges: [
           { text: "Default", variant: "info" },
           { text: "No Data", variant: "danger" }
         ]
-      }
+      })
     },
     body: {
       type: Object,
-      default: {
-        text: "Sample text of something here",
-        
-      }
+      default: () => ({
+        text: "Sample text of something here"
+      })
     }
   },
   data() {
