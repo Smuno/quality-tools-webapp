@@ -16,7 +16,11 @@
         texto usuario
         resultado ¿que es un resultado?
         -->
-      <base-text-input @new-text="showData($event)" :isEditable="false" />
+      <base-text-input
+        @new-text="showData($event)"
+        :isEditable="true"
+        :onCard="true"
+      />
     </b-card-body>
     <b-card-footer> </b-card-footer>
   </b-card>
@@ -46,6 +50,10 @@ export default {
   data() {
     return {};
   },
-  methods: {}
+  methods: {
+    showData: function(indata) {
+      this.bodyTextUserInput = indata;
+    }
+  }
 };
 </script>
