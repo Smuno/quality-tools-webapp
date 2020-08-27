@@ -16,15 +16,20 @@
         texto usuario
         resultado ¿que es un resultado?
         -->
-      <p><span v-html="body.text"></span></p>
+      <base-text-input @new-text="showData($event)" :isEditable="false" />
     </b-card-body>
     <b-card-footer> </b-card-footer>
   </b-card>
 </template>
 
 <script>
+import BaseTextInput from "../Generics/BaseTextInput";
+
 export default {
   name: "ResultCard",
+  components: {
+    BaseTextInput
+  },
   props: {
     header: {
       type: Object,
@@ -36,12 +41,7 @@ export default {
         ]
       })
     },
-    body: {
-      type: Object,
-      default: () => ({
-        text: "Sample text of something here"
-      })
-    }
+    body: {}
   },
   data() {
     return {};
