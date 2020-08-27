@@ -5,7 +5,7 @@
       <router-link to="/tempo">Tempo</router-link> |
       <router-link to="/pareto">Pareto</router-link> |
       <router-link to="/ControlChart">Control Chart</router-link> |
-      <router-link to="/lotacceptance">Control Chart</router-link> |
+      <router-link to="/lotacceptance">Lot Acceptance</router-link> |
     </div>
     <transition>
       <b-container fluid id="views">
