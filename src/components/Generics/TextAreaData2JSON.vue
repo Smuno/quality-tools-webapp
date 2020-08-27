@@ -22,12 +22,13 @@ export default {
   },
   data() {
     return {
-      pastedText: ""
+      pastedText: "",
+      canPaste: true
     };
   },
   methods: {
     textToJson: function(tsvText) {
-      tsvText = tsvText.replace(/,/g,'.')
+      tsvText = tsvText.replace(/,/g, ".");
       var allTextLines = tsvText.split(/\r\n|\n/);
       //Split per line on tabs and commas
       var headers = allTextLines[0].split(/\t|,/);
@@ -47,17 +48,36 @@ export default {
         }
       }
       return lines;
+    },
+    makeToast: function(title, content, variant, append = false) {
+      this.$bvToast.toast(content, {
+        variant: variant,
+        title: title,
+        autoHideDelay: 5000,
+        appendToast: append
+      });
     }
   },
   watch: {
     pastedText: function(newVal) {
-      if (newVal.length > 0) {
-        this.$emit("pasted-data", this.textToJson(newVal));
+      if (this.canPaste) {
+        this.makeToast(
+          "Copia de datos",
+          "Se está cargando tus datos",
+          "warning"
+        );
+        if (newVal.length > 0) {
+          setTimeout(() => {
+            this.$emit("pasted-data", this.textToJson(newVal));
+          }, 900);
+        }
+        setTimeout(() => {
+          this.makeToast("Copia de datos", "Copia Finalizada", "info");
+          this.$refs.pasteArea.blur();
+          this.pastedText = "";
+        }, 1);
       }
-      setTimeout(() => {
-        this.$refs.pasteArea.blur();
-        this.pastedText = "";
-      }, 1);
+      this.canPaste = !this.canPaste;
     }
   }
 };
