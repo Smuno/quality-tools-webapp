@@ -1,12 +1,12 @@
 <template>
   <b-container>
-    <b-row no-gutters>
+    <!-- Menu para editar texto -->
+    <b-row no-gutters v-if="isEditable">
       <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
         <b-button-toolbar>
           <b-button-group size="sm">
             <b-button
               title="Paragraph"
-              :class="{ 'is-active': isActive.paragraph() }"
               :variant="variantType(isActive.paragraph())"
               @click="commands.paragraph"
             >
@@ -14,7 +14,6 @@
             </b-button>
             <b-button
               title="Bold"
-              :class="{ 'is-active': isActive.bold() }"
               :variant="variantType(isActive.bold())"
               @click="commands.bold"
             >
@@ -22,7 +21,6 @@
             </b-button>
             <b-button
               title="Italic"
-              :class="{ 'is-active': isActive.italic() }"
               :variant="variantType(isActive.italic())"
               @click="commands.italic"
             >
@@ -44,7 +42,7 @@
         </b-button-toolbar>
       </editor-menu-bar>
     </b-row>
-
+<!-- Espacio de edicion de texto -->
     <b-row no-gutters>
       <b-col>
         <EditorContent class="editorContent" :editor="editor" />
@@ -82,11 +80,22 @@ export default {
     EditorContent,
     EditorMenuBar
   },
+  props:{
+    isEditable:{
+      type:Boolean,
+      default:true,
+    },
+    contentForEditor:{
+      type:String,
+      default:"<h1>Hola!,</h1><p>Ejemplo de texto, un poco largo para ver como queda y ver aun si extiendo por sobre</p>",
+    }
+  },
   data() {
     return {
       keepInBounds: true,
       editor: null,
-      textJSON: null
+      textJSON: null,
+      isOnFocus:false,
     };
   },
   methods: {
@@ -107,8 +116,8 @@ export default {
   mounted() {
     let timeOutTyping = null;
     this.editor = new Editor({
-      content:
-        "<h1>Hola!,</h1><p>Ejemplo de texto, un poco largo para ver como queda y ver aun si extiendo por sobre</p>",
+      editable:this.isEditable,
+      content:this.contentForEditor,
       extensions: [
         new Heading({ levels: [1, 2, 3] }),
         new ListItem(),
@@ -118,8 +127,8 @@ export default {
       onUpdate: value => {
         clearTimeout(this.timeoutTyping);
         this.timeoutTyping = setTimeout(() => {
-          this.textJSON = value.getJSON();
-          console.log(value.getJSON());
+          this.textJSON = value.getHTML();
+          console.log(value.getHTML());
         }, 1000);
       }
     });
@@ -133,7 +142,6 @@ export default {
 <style lang="scss" scoped>
 .editorContent {
   padding: 0rem;
-  background-color: #f2fbef;
   text-align: left;
 }
 </style>
