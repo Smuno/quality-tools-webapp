@@ -89,8 +89,10 @@ export default {
       /**
        * Ante llegada de datos copiados de excel (textareadata2json)
        */
+      //* Asignando id como null para formar columna
+      //* id se crea en componente TableTabulator
       eventData.forEach((el, index) => {
-        eventData[index].id = "S" + index;
+        eventData[index].id = null;
       });
 
       //crear nueva definicion de columnas y setear
@@ -108,12 +110,14 @@ export default {
     CALLBACKrowSelected: function(data, rows) {
       // console.log("data: ", data);
       // console.log("rows: ", rows);
-    }
+    },
+
   },
   computed: {
     plotData: function() {
+      //! se ejecuta 2 veces por asignacion de id en tabla
       //$ Tamaño muestral - Solo se considera caso de tamaño muestral igual
-
+      console.log('plot data')
       const idRows = [...this.tableData].map(rowObj => {
         return rowObj.id;
       });
@@ -185,7 +189,6 @@ export default {
       //Factores para graficos
       const factors = factorsControlCharts(sampleSize);
 
-      console.log('deviation for this chart',average_desviation[this.chartType])
       // Formar linea average plot proceso
       const averageProcess = {
         name: "Characteristic",
@@ -232,8 +235,6 @@ export default {
           dash: "dash"
         }
       };
-
-      console.log("factor: ");
 
       const averageLCL = {
         x: xBordes,
@@ -322,7 +323,9 @@ export default {
       };
     }
   },
-  watch: {},
+  watch: {
+
+  },
   mounted() {
     this.tableOptions.rowSelected = this.CALLBACKrowSelected;
   }

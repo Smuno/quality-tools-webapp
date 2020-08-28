@@ -11,7 +11,7 @@
           </b-button>
         </b-navbar>
         <table-tabulator v-model="tableData" :options="tableOptions" />
-        <TextAreaData2JSON @pasted-data="tableData = $event" />
+        <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
       </b-col>
       <b-col>
         <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
@@ -50,13 +50,17 @@ export default {
   methods: {
     addRow: function() {
       /** Se añade nueva columna */
-      this.tableData.push({ });
+      this.tableData.push({});
     },
     deleteRow: function() {
       /** Se elimina ultima columna
        * (falta dar habilidad de eligir cual eliminar)
        */
       this.tableData.pop();
+    },
+    EVENTtextArea: function(eventData) {
+      //A la llegada de datos copiados de excel
+      this.tableData = eventData;
     }
   },
   computed: {
@@ -124,7 +128,6 @@ export default {
         type: "line",
         yaxis: "y2"
       };
-      console.log([bar, line, topbar]);
       return [bar, line, topbar];
     }
   }
