@@ -45,9 +45,11 @@ export default {
     // x0: Name / x2:value
     plotData: function() {
       //entregar ordenado de mayor a menor
+      //! problema como elementos no definidos
       let sorted = [...this.tableData].sort((a, b) => {
         return parseInt(b.x1) - parseInt(a.x1);
       });
+
       /*calcular porcentajes - line*/
       //Suma de todos los valores
       const totalValue = [...sorted].reduce((a, b) => {
@@ -75,6 +77,18 @@ export default {
       const xNames = sorted.map(el => {
         return el.x0;
       });
+
+      //*Obtencion de id para usos futuros
+      const xId=sorted.map(el => {
+        return el.id;
+      });
+
+      console.log('sorted')
+      console.log('names: ',xNames)
+      console.log('id: ',xId)
+      console.log('porcentaje: ',porcentajes)
+      console.log('top80%: ',top80)
+      
       const yBar = sorted.map(el => {
         return parseInt(el.x1);
       });
