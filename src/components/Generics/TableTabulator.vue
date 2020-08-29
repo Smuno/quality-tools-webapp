@@ -55,7 +55,8 @@ export default {
           // else{console.log('id no existe: ',el)}
           newValue[index].id = index;
         });
-
+        //? ¿la alerta aquí es necesaria ? este watch actualiza datos para datos entrantes
+        //? no para datos salientes de la tabla (eso se hace con callback)
         this.$emit("changeOnTable", newValue);
         this.table.replaceData(newValue);
       }
