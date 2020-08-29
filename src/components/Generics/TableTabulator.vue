@@ -49,15 +49,9 @@ export default {
       handler: function(newValue) {
         //TODO asignar id solo una vez por cada fila
         //* Checkear todas las id?
-
         newValue.forEach((el, index) => {
-          // if('id' in el){console.log('id existe: ',el)}
-          // else{console.log('id no existe: ',el)}
           newValue[index].id = index;
         });
-        //? ¿la alerta aquí es necesaria ? este watch actualiza datos para datos entrantes
-        //? no para datos salientes de la tabla (eso se hace con callback)
-        this.$emit("changeOnTable", newValue);
         this.table.replaceData(newValue);
       }
     },
