@@ -42,12 +42,10 @@ const DEFAULT_LAYOUT = {
 
 const DEFAULT_OPTION_TABLE = {
   clipboard: true,
-  layoutColumnsOnNewData: true,
   reactiveData: true,
   selectable: true,
   layout: "fitDataFill",
   height: "300px",
-  responsiveLayout: "hide",
   columns: [
     { field: "id", title: "id", hozAlign: "center" },
     {
