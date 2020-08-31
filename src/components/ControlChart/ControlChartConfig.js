@@ -42,7 +42,6 @@ const DEFAULT_LAYOUT = {
 
 const DEFAULT_OPTION_TABLE = {
   clipboard: true,
-  reactiveData: true,
   selectable: true,
   layout: "fitDataFill",
   height: "300px",

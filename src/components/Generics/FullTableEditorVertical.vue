@@ -74,10 +74,9 @@ export default {
   methods: {
     addRow: function() {
       /** Se añade nueva columna */
-      // let lastrow= _.cloneDeep(  this.middTableData[this.middTableData.length-1])
-      // lastrow.id=this.middTableData.length
-      // this.middTableData.push(lastrow);
-      this.middTableData.push({})
+      let lastrow= _.cloneDeep(  this.middTableData[this.middTableData.length-1])
+      lastrow.id=this.middTableData.length
+      this.middTableData.push(lastrow);
     },
     deleteRow: function() {
       /** Se elimina ultima columna*/
