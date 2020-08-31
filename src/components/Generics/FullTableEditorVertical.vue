@@ -1,7 +1,6 @@
 <template>
   <b-container fluid>
     <b-col>
-      <b-row no-gutters>
         <b-navbar variant="info" type="dark" :sticky="true">
           <b-button v-on:click="addRow" variant="success" size="sm">
             New Row
@@ -10,17 +9,16 @@
             Delete Last Row
           </b-button>
         </b-navbar>
-      </b-row>
-      <b-row no-gutters>
         <TableTabulator v-model="middTableData" :options="tableOptions" />
-      </b-row>
       <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
     </b-col>
   </b-container>
 </template>
 
 <script>
-//! cambiar layout - no ajusta a pagina
+// cambiar layout - no ajusta a pagina
+//* Eliminando filas se arreglan columnas
+// TODO seleccion multiple de filas
 /**
 Entrada: opciones default de tabla, dataTable as v-model
 Comportamiento: 

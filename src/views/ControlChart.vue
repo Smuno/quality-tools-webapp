@@ -1,28 +1,25 @@
 <template>
   <b-container fluid>
-    <b-navbar variant="info" type="dark" :sticky="true">
-      <b-button @click="newRow" size="sm">Add Row</b-button>
-      <b-button @click="deleteRow" variant="danger" size="sm"
-        >Delete Row</b-button
-      >
-      <b-button variant="warning" size="sm">Delete Selected Row</b-button>
-      <b-col cols="4">
-        <b-form-select
-          v-model="chartType"
-          :options="[
-            { value: null, text: 'Select Chart Type' },
-            { value: 'XR', text: 'Chart X-R Ranges' },
-            { value: 'XS', text: 'Chart X-S Standar Deviation' }
-          ]"
-        ></b-form-select>
-      </b-col>
-    </b-navbar>
     <b-row>
       <b-col cols="4">
-        <table-tabulator v-model="tableData" :options="tableOptions" />
-        <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
+        <FullTableEditorVertical
+          v-model="tableData"
+          :tableOptions="tableOptions"
+        />
       </b-col>
       <b-col>
+        <b-navbar variant="info" type="dark" :sticky="true">
+          <b-col cols="4">
+            <b-form-select
+              v-model="chartType"
+              :options="[
+                { value: null, text: 'Select Chart Type' },
+                { value: 'XR', text: 'Chart X-R Ranges' },
+                { value: 'XS', text: 'Chart X-S Standar Deviation' }
+              ]"
+            ></b-form-select>
+          </b-col>
+        </b-navbar>
         <b-row>
           <PlotlyGraph
             ref="ProcessAverage"
@@ -43,8 +40,7 @@
 </template>
 
 <script>
-import TableTabulator from "../components/Generics/TableTabulator";
-import TextAreaData2JSON from "../components/Generics/TextAreaData2JSON";
+import FullTableEditorVertical from "../components/Generics/FullTableEditorVertical";
 import PlotlyGraph from "../components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
@@ -60,8 +56,7 @@ const math = create(all);
 export default {
   name: "ControlChart",
   components: {
-    TableTabulator,
-    TextAreaData2JSON,
+    FullTableEditorVertical,
     PlotlyGraph
   },
   data() {
@@ -86,38 +81,34 @@ export default {
     // TODO borrar filas seleccionadas
     deleteSelectedRows: function() {},
     EVENTtextArea: function(eventData) {
-      /**
-       * Ante llegada de datos copiados de excel (textareadata2json)
-       */
-      //* Asignando id como null para formar columna
-      //* id se crea en componente TableTabulator
-      eventData.forEach((el, index) => {
-        eventData[index].id = null;
-      });
-
       //crear nueva definicion de columnas y setear
       const columnsNames = Object.keys(eventData[0]);
+      console.log("nombre columnas", columnsNames);
       let newColumns = [];
-
+      console.log("before", newColumns);
       columnsNames.forEach((el, index) => {
-        newColumns.push({ field: el, title: el, editor: true });
+        console.log("element", el);
+        console.log("element ==id", el == "id" ? false : true);
+        newColumns.push({
+          field: el,
+          title: el,
+          //editor: (el != "id"),
+          editor: true,
+          visible: true
+        });
       });
-      newColumns.unshift(newColumns.pop());
+      console.log("columnas options", newColumns);
       this.tableOptions.columns = newColumns;
-      //setear nuevos datos (eventData) a tableData
-      this.tableData = eventData;
     },
     CALLBACKrowSelected: function(data, rows) {
       // console.log("data: ", data);
       // console.log("rows: ", rows);
-    },
-
+    }
   },
   computed: {
     plotData: function() {
-      //! se ejecuta 2 veces por asignacion de id en tabla
       //$ Tamaño muestral - Solo se considera caso de tamaño muestral igual
-      console.log('plot data')
+      console.log("plot data");
       const idRows = [...this.tableData].map(rowObj => {
         return rowObj.id;
       });
@@ -152,24 +143,25 @@ export default {
       const range_average_RChart = math.mean(range_RChart);
 
       const variance_SChart = dataAsArray.map((row, index) => {
-        return ((
-          row.reduce((acc, current) => {
+        return (
+          (row.reduce((acc, current) => {
             return acc + (current - meanRows[index]) ** 2;
           }, 0) /
-          (sampleSize - 1)
-        )**(1/2));
-      })
+            (sampleSize - 1)) **
+          (1 / 2)
+        );
+      });
 
-      const variance_average_SChart=math.mean(variance_SChart)
+      const variance_average_SChart = math.mean(variance_SChart);
 
-      const desviation={
-        XR:range_RChart,
-        XS:variance_SChart
-      }
-      const average_desviation ={
-        XR:range_average_RChart,
-        XS:variance_average_SChart
-      }
+      const desviation = {
+        XR: range_RChart,
+        XS: variance_SChart
+      };
+      const average_desviation = {
+        XR: range_average_RChart,
+        XS: variance_average_SChart
+      };
 
       //!   Falta considerar caso n=1
       /*   Para carta de promedios todos tiene la forma
@@ -223,8 +215,12 @@ export default {
       const averageUCL = {
         x: xBordes,
         y: [
-          meanAllRows + factors[this.chartType].fProcess * average_desviation[this.chartType],
-          meanAllRows + factors[this.chartType].fProcess * average_desviation[this.chartType]
+          meanAllRows +
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType],
+          meanAllRows +
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType]
         ],
         name: "UCL",
         type: "scatter",
@@ -239,8 +235,12 @@ export default {
       const averageLCL = {
         x: xBordes,
         y: [
-          meanAllRows - factors[this.chartType].fProcess * average_desviation[this.chartType],
-          meanAllRows - factors[this.chartType].fProcess * average_desviation[this.chartType]
+          meanAllRows -
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType],
+          meanAllRows -
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType]
         ],
         name: "LCL",
         type: "scatter",
@@ -272,7 +272,10 @@ export default {
       //Formar linea variability plot central
       const variabilityCenterLine = {
         x: xBordes,
-        y: [average_desviation[this.chartType], average_desviation[this.chartType]],
+        y: [
+          average_desviation[this.chartType],
+          average_desviation[this.chartType]
+        ],
         name: "Average Range",
         type: "scatter",
         mode: "lines",
@@ -324,7 +327,12 @@ export default {
     }
   },
   watch: {
-
+    tableData: {
+      handler: function(newValue) {
+        this.EVENTtextArea(newValue);
+      },
+      deep: true
+    }
   },
   mounted() {
     this.tableOptions.rowSelected = this.CALLBACKrowSelected;
