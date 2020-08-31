@@ -54,7 +54,6 @@ export default {
       deep: true,
       handler: function(newValue) {
         this.table.setColumns(newValue.columns);
-        this.table.redraw()
       }
     }
   },

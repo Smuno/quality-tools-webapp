@@ -19,13 +19,6 @@
 // cambiar layout - no ajusta a pagina
 //* Eliminando filas se arreglan columnas
 // TODO seleccion multiple de filas
-//! BUG: NO SE PUEDE AÑADIR MAS DE UNA FILA
-/* Bug no ocurre si se modifica la ultima fila antes de añadir
-una nueva fila
-  bug no ocurre en pareto, solo en control chart
-  ? ¿es por el control de columnas options.columns columnAssing() ?
-*/
-
 
 /**
 Entrada: opciones default de tabla, dataTable as v-model
@@ -73,17 +66,17 @@ export default {
   },
   methods: {
     addRow: function() {
-      /** Se añade nueva columna */
-      let lastrow= _.cloneDeep(  this.middTableData[this.middTableData.length-1])
+      /** Se añade nueva copiando anterior fila */
+      let lastrow= _.cloneDeep( this.middTableData[this.middTableData.length-1])
       lastrow.id=this.middTableData.length
       this.middTableData.push(lastrow);
     },
     deleteRow: function() {
-      /** Se elimina ultima columna*/
-      console.log('delete row')
+      /** Se elimina ultima fila*/
       this.middTableData.pop();
     },
     EVENTtextArea: function(copiedTableFromUser) {
+      /** Se asignan id para los nuevos elementos */
       copiedTableFromUser.forEach((el, index) => {
         copiedTableFromUser[index].id = index;
       });

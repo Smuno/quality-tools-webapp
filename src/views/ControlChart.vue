@@ -79,13 +79,23 @@ export default {
         newColumns.push({
           field: el,
           title: el,
-          //editor: (el != "id"),
-          editor: true,
+          editor: el != "id",
           visible: true
         });
       });
-      //todo asegurar columna id al inicio
-      //newColumns.unshift(newColumns.pop());
+      //* Asegurar columna id al inicio
+      newColumns.unshift(
+        // add to the front of the array
+        newColumns.splice(
+          // the result of deleting items
+          newColumns.findIndex(
+            // starting with the index where
+            el => el.field === "id"
+          ), // the name is Sarah
+          1
+        )[0] // and continuing for one item
+      );
+      console.log(newColumns);
       this.tableOptions.columns = newColumns;
     }
   },
@@ -97,8 +107,7 @@ export default {
       deep: true
     }
   },
-  mounted() {
-  },
+  mounted() {},
   computed: {
     plotData: function() {
       //$ Tamaño muestral - Solo se considera caso de tamaño muestral igual
