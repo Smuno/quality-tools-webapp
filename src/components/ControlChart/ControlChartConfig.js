@@ -17,7 +17,7 @@ var trace1 = {
 
 var data = [trace0, trace1];
 
-const DEFAULT_TABLE = [{ id: "R0", x0: "2", x1: "4" }];
+const DEFAULT_TABLE = [{ id: 0, x0: "2", x1: "4" }];
 
 const DEFAULT_LAYOUT = {
   average: {
@@ -42,12 +42,9 @@ const DEFAULT_LAYOUT = {
 
 const DEFAULT_OPTION_TABLE = {
   clipboard: true,
-  layoutColumnsOnNewData: true,
-  reactiveData: true,
   selectable: true,
   layout: "fitDataFill",
   height: "300px",
-  responsiveLayout: "hide",
   columns: [
     { field: "id", title: "id", hozAlign: "center" },
     {

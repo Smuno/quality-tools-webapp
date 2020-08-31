@@ -47,16 +47,6 @@ export default {
     tableData: {
       deep: true,
       handler: function(newValue) {
-        //TODO asignar id solo una vez por cada fila
-        //* Checkear todas las id?
-
-        newValue.forEach((el, index) => {
-          // if('id' in el){console.log('id existe: ',el)}
-          // else{console.log('id no existe: ',el)}
-          newValue[index].id = index;
-        });
-
-        this.$emit("changeOnTable", newValue);
         this.table.replaceData(newValue);
       }
     },

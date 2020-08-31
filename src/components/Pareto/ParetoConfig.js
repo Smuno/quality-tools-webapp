@@ -24,10 +24,11 @@ const DEFAULT_LAYOUT = {
 const DEFAULT_OPTION_TABLE = {
   clipboard: true,
   layoutColumnsOnNewData: true,
-  layout: "fitColumns",
+  autoResize:true,
+  layout: "fitData",
   height: "400px",
   columns: [
-    { field: "x0", title: "Name", editor: true, widthGrow: 2 },
+    { field: "x0", title: "Name", editor: true,},
     { field: "x1", title: "Value", editor: true, hozAlign: "center" }
   ],
 };

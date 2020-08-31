@@ -2,16 +2,10 @@
   <b-container>
     <b-row>
       <b-col cols="5">
-        <b-navbar variant="info" type="dark" :sticky="true">
-          <b-button v-on:click="addRow" variant="success" size="sm">
-            New Row
-          </b-button>
-          <b-button v-on:click="deleteRow" variant="danger" size="sm">
-            Delete Last Row
-          </b-button>
-        </b-navbar>
-        <table-tabulator v-model="tableData" :options="tableOptions" />
-        <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
+        <FullTableEditorVertical
+          v-model="tableData"
+          :tableOptions="tableOptions"
+        />
       </b-col>
       <b-col>
         <ploty-graph :plotData="plotData" :layout="plotlyLayout" />
@@ -21,9 +15,8 @@
 </template>
 
 <script>
-import TableTabulator from "../components/Generics/TableTabulator";
+import FullTableEditorVertical from "../components/Generics/FullTableEditorVertical";
 import PlotyGraph from "../components/Generics/PlotyGraph";
-import TextAreaData2JSON from "../components/Generics/TextAreaData2JSON";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
@@ -33,9 +26,8 @@ import {
 export default {
   name: "Pareto",
   components: {
-    TableTabulator,
     PlotyGraph,
-    TextAreaData2JSON
+    FullTableEditorVertical
   },
   data() {
     return {
@@ -47,22 +39,7 @@ export default {
       plotlyLayout: DEFAULT_LAYOUT
     };
   },
-  methods: {
-    addRow: function() {
-      /** Se añade nueva columna */
-      this.tableData.push({});
-    },
-    deleteRow: function() {
-      /** Se elimina ultima columna
-       * (falta dar habilidad de eligir cual eliminar)
-       */
-      this.tableData.pop();
-    },
-    EVENTtextArea: function(eventData) {
-      //A la llegada de datos copiados de excel
-      this.tableData = eventData;
-    }
-  },
+  methods: {},
   computed: {
     //calculo de los datos para plot con depencencia de los datos de tabla
     // x0: Name / x2:value

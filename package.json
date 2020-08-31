@@ -11,6 +11,7 @@
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.16.0",
     "core-js": "^3.6.5",
+    "lodash": "^4.17.20",
     "mathjs": "^7.1.0",
     "plotly.js-dist": "^1.54.7",
     "tabulator-tables": "^4.7.2",

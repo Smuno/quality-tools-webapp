@@ -1,28 +1,25 @@
 <template>
   <b-container fluid>
-    <b-navbar variant="info" type="dark" :sticky="true">
-      <b-button @click="newRow" size="sm">Add Row</b-button>
-      <b-button @click="deleteRow" variant="danger" size="sm"
-        >Delete Row</b-button
-      >
-      <b-button variant="warning" size="sm">Delete Selected Row</b-button>
-      <b-col cols="4">
-        <b-form-select
-          v-model="chartType"
-          :options="[
-            { value: null, text: 'Select Chart Type' },
-            { value: 'XR', text: 'Chart X-R Ranges' },
-            { value: 'XS', text: 'Chart X-S Standar Deviation' }
-          ]"
-        ></b-form-select>
-      </b-col>
-    </b-navbar>
     <b-row>
-      <b-col cols="4">
-        <table-tabulator v-model="tableData" :options="tableOptions" />
-        <TextAreaData2JSON @pasted-data="EVENTtextArea($event)" />
+      <b-col cols="5">
+        <FullTableEditorVertical
+          v-model="tableData"
+          :tableOptions="tableOptions"
+        />
       </b-col>
       <b-col>
+        <b-navbar variant="info" type="dark" :sticky="true">
+          <b-col cols="4">
+            <b-form-select
+              v-model="chartType"
+              :options="[
+                { value: null, text: 'Select Chart Type' },
+                { value: 'XR', text: 'Chart X-R Ranges' },
+                { value: 'XS', text: 'Chart X-S Standar Deviation' }
+              ]"
+            ></b-form-select>
+          </b-col>
+        </b-navbar>
         <b-row>
           <PlotlyGraph
             ref="ProcessAverage"
@@ -43,8 +40,7 @@
 </template>
 
 <script>
-import TableTabulator from "../components/Generics/TableTabulator";
-import TextAreaData2JSON from "../components/Generics/TextAreaData2JSON";
+import FullTableEditorVertical from "../components/Generics/FullTableEditorVertical";
 import PlotlyGraph from "../components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
@@ -60,8 +56,7 @@ const math = create(all);
 export default {
   name: "ControlChart",
   components: {
-    TableTabulator,
-    TextAreaData2JSON,
+    FullTableEditorVertical,
     PlotlyGraph
   },
   data() {
@@ -76,48 +71,46 @@ export default {
     };
   },
   methods: {
-    //crear evento para añadir columnas
-    newRow: function() {
-      this.tableData.push({});
-    },
-    deleteRow: function() {
-      this.tableData.pop();
-    },
-    // TODO borrar filas seleccionadas
-    deleteSelectedRows: function() {},
-    EVENTtextArea: function(eventData) {
-      /**
-       * Ante llegada de datos copiados de excel (textareadata2json)
-       */
-      //* Asignando id como null para formar columna
-      //* id se crea en componente TableTabulator
-      eventData.forEach((el, index) => {
-        eventData[index].id = null;
-      });
-
+    columnAssing: function(eventData) {
       //crear nueva definicion de columnas y setear
       const columnsNames = Object.keys(eventData[0]);
       let newColumns = [];
-
       columnsNames.forEach((el, index) => {
-        newColumns.push({ field: el, title: el, editor: true });
+        newColumns.push({
+          field: el,
+          title: el,
+          editor: el != "id",
+          visible: true
+        });
       });
-      newColumns.unshift(newColumns.pop());
+      //* Asegurar columna id al inicio
+      newColumns.unshift(
+        // add to the front of the array
+        newColumns.splice(
+          // the result of deleting items
+          newColumns.findIndex(
+            // starting with the index where
+            el => el.field === "id"
+          ), // the name is Sarah
+          1
+        )[0] // and continuing for one item
+      );
+      console.log(newColumns);
       this.tableOptions.columns = newColumns;
-      //setear nuevos datos (eventData) a tableData
-      this.tableData = eventData;
-    },
-    CALLBACKrowSelected: function(data, rows) {
-      // console.log("data: ", data);
-      // console.log("rows: ", rows);
-    },
-
+    }
   },
+  watch: {
+    tableData: {
+      handler: function(newValue) {
+        this.columnAssing(newValue);
+      },
+      deep: true
+    }
+  },
+  mounted() {},
   computed: {
     plotData: function() {
-      //! se ejecuta 2 veces por asignacion de id en tabla
       //$ Tamaño muestral - Solo se considera caso de tamaño muestral igual
-      console.log('plot data')
       const idRows = [...this.tableData].map(rowObj => {
         return rowObj.id;
       });
@@ -129,7 +122,6 @@ export default {
         });
       });
       const sampleSize = dataAsArray[0].length;
-
       //* meanRows es array de floats de promedios x̄
       const meanRows = dataAsArray.map(el => {
         return (
@@ -138,39 +130,33 @@ export default {
           }, 0) / sampleSize
         );
       });
-
       //* meanAllRows es float de ̿x
       const meanAllRows =
         meanRows.reduce((acc, current) => {
           return acc + current;
         }) / meanRows.length;
-
       const range_RChart = dataAsArray.map(el => {
         return math.max(el) - math.min(el);
       });
-
       const range_average_RChart = math.mean(range_RChart);
-
       const variance_SChart = dataAsArray.map((row, index) => {
-        return ((
-          row.reduce((acc, current) => {
+        return (
+          (row.reduce((acc, current) => {
             return acc + (current - meanRows[index]) ** 2;
           }, 0) /
-          (sampleSize - 1)
-        )**(1/2));
-      })
-
-      const variance_average_SChart=math.mean(variance_SChart)
-
-      const desviation={
-        XR:range_RChart,
-        XS:variance_SChart
-      }
-      const average_desviation ={
-        XR:range_average_RChart,
-        XS:variance_average_SChart
-      }
-
+            (sampleSize - 1)) **
+          (1 / 2)
+        );
+      });
+      const variance_average_SChart = math.mean(variance_SChart);
+      const desviation = {
+        XR: range_RChart,
+        XS: variance_SChart
+      };
+      const average_desviation = {
+        XR: range_average_RChart,
+        XS: variance_average_SChart
+      };
       //!   Falta considerar caso n=1
       /*   Para carta de promedios todos tiene la forma
        *    Center Line = ̿x (promedio de promedios)
@@ -188,7 +174,6 @@ export default {
       const xBordes = [-1, dataAsArray.length + 1];
       //Factores para graficos
       const factors = factorsControlCharts(sampleSize);
-
       // Formar linea average plot proceso
       const averageProcess = {
         name: "Characteristic",
@@ -223,8 +208,12 @@ export default {
       const averageUCL = {
         x: xBordes,
         y: [
-          meanAllRows + factors[this.chartType].fProcess * average_desviation[this.chartType],
-          meanAllRows + factors[this.chartType].fProcess * average_desviation[this.chartType]
+          meanAllRows +
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType],
+          meanAllRows +
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType]
         ],
         name: "UCL",
         type: "scatter",
@@ -235,12 +224,15 @@ export default {
           dash: "dash"
         }
       };
-
       const averageLCL = {
         x: xBordes,
         y: [
-          meanAllRows - factors[this.chartType].fProcess * average_desviation[this.chartType],
-          meanAllRows - factors[this.chartType].fProcess * average_desviation[this.chartType]
+          meanAllRows -
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType],
+          meanAllRows -
+            factors[this.chartType].fProcess *
+              average_desviation[this.chartType]
         ],
         name: "LCL",
         type: "scatter",
@@ -272,7 +264,10 @@ export default {
       //Formar linea variability plot central
       const variabilityCenterLine = {
         x: xBordes,
-        y: [average_desviation[this.chartType], average_desviation[this.chartType]],
+        y: [
+          average_desviation[this.chartType],
+          average_desviation[this.chartType]
+        ],
         name: "Average Range",
         type: "scatter",
         mode: "lines",
@@ -322,12 +317,6 @@ export default {
         ]
       };
     }
-  },
-  watch: {
-
-  },
-  mounted() {
-    this.tableOptions.rowSelected = this.CALLBACKrowSelected;
   }
 };
 </script>
