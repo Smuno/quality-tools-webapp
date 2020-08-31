@@ -17,7 +17,7 @@ var trace1 = {
 
 var data = [trace0, trace1];
 
-const DEFAULT_TABLE = [{ id: "R0", x0: "2", x1: "4" }];
+const DEFAULT_TABLE = [{ id: 0, x0: "2", x1: "4" }];
 
 const DEFAULT_LAYOUT = {
   average: {

@@ -47,11 +47,6 @@ export default {
     tableData: {
       deep: true,
       handler: function(newValue) {
-        //TODO asignar id solo una vez por cada fila
-        //* Checkear todas las id?
-        newValue.forEach((el, index) => {
-          newValue[index].id = index;
-        });
         this.table.replaceData(newValue);
       }
     },
@@ -59,6 +54,7 @@ export default {
       deep: true,
       handler: function(newValue) {
         this.table.setColumns(newValue.columns);
+        this.table.redraw()
       }
     }
   },
