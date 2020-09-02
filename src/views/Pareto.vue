@@ -22,12 +22,18 @@ import {
   DEFAULT_TABLE,
   DEFAULT_OPTION_TABLE
 } from "../components/Pareto/ParetoConfig";
-
+import _ from "lodash";
 export default {
   name: "Pareto",
   components: {
     PlotyGraph,
     FullTableEditorVertical
+  },
+  props: {
+    uniqueId: {
+      type: "string",
+      default: "123FFF"
+    }
   },
   data() {
     return {
@@ -36,17 +42,20 @@ export default {
       /** Options to tabulator */
       tableOptions: DEFAULT_OPTION_TABLE,
       /** Layout to plotly */
-      plotlyLayout: DEFAULT_LAYOUT
+      plotlyLayout: DEFAULT_LAYOUT,
+      /**  */
+      idTop80: [0]
     };
   },
   methods: {},
   computed: {
-    //calculo de los datos para plot con depencencia de los datos de tabla
-    // x0: Name / x2:value
     plotData: function() {
+      //calculo de los datos para plot con depencencia de los datos de tabla
+      // x0: Name / x2:value
       //entregar ordenado de mayor a menor
       //! problema como elementos no definidos
-      let sorted = [...this.tableData].sort((a, b) => {
+
+      let sorted = _.cloneDeep(this.tableData).sort((a, b) => {
         return parseInt(b.x1) - parseInt(a.x1);
       });
 
@@ -69,7 +78,7 @@ export default {
         return 100 * (el / totalValue);
       });
       //Calculando los mayores en el 80%
-      let top80 = porcentajes.map((porcent, index) => {
+      let top80 = porcentajes.filter((porcent, index) => {
         if ((porcent > 80 && index == 0) || porcent <= 80)
           return parseInt(porcent);
       });
@@ -79,16 +88,24 @@ export default {
       });
 
       //*Obtencion de id para usos futuros
-      const xId=sorted.map(el => {
+      const xId = sorted.map(el => {
         return el.id;
       });
+      const xNames_top80 = xNames.slice(
+        0,
+        top80.length > 0 ? top80.length - 1 : 0
+      );
+      const xId_top80 = xId.slice(0, top80.length > 0 ? top80.length - 1 : 0);
 
-      console.log('sorted')
-      console.log('names: ',xNames)
-      console.log('id: ',xId)
-      console.log('porcentaje: ',porcentajes)
-      console.log('top80%: ',top80)
-      
+      this.idTop80 = xId_top80;
+
+      // console.log('sorted')
+      // console.log('names: ',xNames)
+      // console.log('id: ',xId)
+      // console.log('porcentaje: ',porcentajes)
+      // console.log('top80%: ',top80,' length: ',top80.length)
+      // console.log('xId_top80: ',xId_top80)
+
       const yBar = sorted.map(el => {
         return parseInt(el.x1);
       });
@@ -120,7 +137,27 @@ export default {
         yaxis: "y2"
       };
       return [bar, line, topbar];
+    },
+    result: function() {
+      return {
+        metadata:{
+          tool:'PARETO',
+          id:this.uniqueId
+        },
+        body: {
+          tags: null,
+          // result: tableData.filter((obj, index) => {
+          //   if (this.idTop80.includes(obj.id)) {
+          //     return obj;
+          //   }
+          // })
+          //* Para pareto
+          result:this.idTop80
+        },
+        data: this.tableData
+      };
     }
-  }
+  },
+  mounted() {}
 };
 </script>

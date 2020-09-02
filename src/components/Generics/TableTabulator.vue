@@ -48,6 +48,8 @@ export default {
       deep: true,
       handler: function(newValue) {
         this.table.replaceData(newValue);
+        console.log('redraw')
+        this.table.redraw(true)
       }
     },
     options: {
