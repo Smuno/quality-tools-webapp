@@ -31,7 +31,7 @@ export default {
   },
   props: {
     uniqueId: {
-      type: "string",
+      type: String,
       default: "123FFF"
     }
   },
@@ -140,19 +140,19 @@ export default {
     },
     result: function() {
       return {
-        metadata:{
-          tool:'PARETO',
-          id:this.uniqueId
+        metadata: {
+          tool: "PARETO",
+          id: this.uniqueId
+        },
+        header: {
+          tags: null
         },
         body: {
-          tags: null,
-          // result: tableData.filter((obj, index) => {
-          //   if (this.idTop80.includes(obj.id)) {
-          //     return obj;
-          //   }
-          // })
-          //* Para pareto
-          result:this.idTop80
+          /* idTableResult es la id de los elementos en tabla que son relevantes:
+          pareto: elementos que genera el 80% de los casos
+          carta de control: elementos fuera de control
+          */
+          idTableResult: this.idTop80
         },
         data: this.tableData
       };
