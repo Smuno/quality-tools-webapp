@@ -1,21 +1,28 @@
 <template>
   <div>
-    <b-row class="bg-info mainRow">
-      <b-col class="text-light mainCol" :md="colSize" :id="actualLevel">
+    <b-row>
+      <b-col
+        :class="variantRoad + ' mainCol'"
+        :md="colSize"
+        :id="actualLevel"
+      >
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
         <editor-content class="textFromThisLevel" :editor="editor" />
         <!-- Botones para añadir y remover sub-filas -->
         <b-button-group>
-          <b-button @click="userClick" variant="success" size="sm">
+          <b-button v-if="levelCol>0" @click="userClick" variant="success" size="sm">
             <b-icon icon="plus-circle" />
           </b-button>
           <b-button
             v-if="!isThisTheEnd"
             variant="dark"
             size="sm"
-            @click="ShowStar = !ShowStar"
+            @click="isThisStarRoad = !isThisStarRoad"
           >
-            <b-icon :icon="ShowStar ? 'star-fill' : 'star'" variant="warning" />
+            <b-icon
+              :icon="isThisStarRoad ? 'star-fill' : 'star'"
+              variant="warning"
+            />
           </b-button>
           <b-button
             v-show="!amIaChild && listRow.length > 0"
@@ -36,6 +43,7 @@
           :levelCol="levelCol + 1"
           v-model="textNextCol"
           v-on:data-updated="listenColData($event)"
+          v-on:star-road="isThisStarRoad=$event"
         >
         </Only1W>
       </b-col>
@@ -50,6 +58,7 @@
         :amIaChild="true"
         v-on:neednewrow="userClick"
         v-on:data-updated="listenRowData(index, $event)"
+        v-on:star-road="nextFather($event)"
       >
       </Only1W>
     </div>
@@ -91,8 +100,7 @@ export default {
       /* data de la fila hijo */
       textNextRow: [],
       /* show button star */
-      ShowStar: false,
-      
+      isThisStarRoad: false
     };
   },
   methods: {
@@ -135,6 +143,9 @@ export default {
       this.textCurrentLevel = this.editor.getJSON().content[0].content[0].text;
       this.$forceUpdate();
       this.$emit("data-updated", this.allData);
+    },
+    nextFather:function(starRoad){
+      this.$emit("star-road",starRoad)
     }
   },
   computed: {
@@ -149,7 +160,14 @@ export default {
     },
     /* Determina ancho de columna segun profundidad - tabulado a la mala pero funciona
     ¿hay otra forma? */
-
+    variantRoad: function() {
+      this.$emit("star-road", this.isThisStarRoad);
+      if (this.isThisStarRoad) {
+        return "bg-warning";
+      } else {
+        return "bg-info";
+      }
+    },
     /**
      *  @returns {number} */
     colSize: function() {
