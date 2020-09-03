@@ -142,7 +142,7 @@ export default {
         body: {
           rules:{
             reduced:[],
-            normal:[],
+            normal:this.rules,
             tight:[]
           }
         }
