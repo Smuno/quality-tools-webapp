@@ -5,14 +5,27 @@
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
         <editor-content class="textFromThisLevel" :editor="editor" />
         <!-- Botones para añadir y remover sub-filas -->
-        <b-button @click="userClick" variant="success" size="sm">+</b-button>
-        <b-button
-          v-show="!amIaChild && listRow.length > 0"
-          @click="userClickRemove"
-          variant="danger"
-          size="sm"
-          >x</b-button
-        >
+        <b-button-group>
+          <b-button @click="userClick" variant="success" size="sm">
+            <b-icon icon="plus-circle" />
+          </b-button>
+          <b-button
+            v-if="!isThisTheEnd"
+            variant="dark"
+            size="sm"
+            @click="ShowStar = !ShowStar"
+          >
+            <b-icon :icon="ShowStar ? 'star-fill' : 'star'" variant="warning" />
+          </b-button>
+          <b-button
+            v-show="!amIaChild && listRow.length > 0"
+            @click="userClickRemove"
+            variant="danger"
+            size="sm"
+          >
+            <b-icon icon="x-square" />
+          </b-button>
+        </b-button-group>
       </b-col>
       <!-- Crea siguiente columna - Hacia la derecha-->
       <b-col>
@@ -76,7 +89,10 @@ export default {
       /* data de la columna hijo - recursivo */
       textNextCol: null,
       /* data de la fila hijo */
-      textNextRow: []
+      textNextRow: [],
+      /* show button star */
+      ShowStar: false,
+      
     };
   },
   methods: {
@@ -133,6 +149,9 @@ export default {
     },
     /* Determina ancho de columna segun profundidad - tabulado a la mala pero funciona
     ¿hay otra forma? */
+
+    /**
+     *  @returns {number} */
     colSize: function() {
       let innerSize = 3;
       switch (this.levelCol) {
