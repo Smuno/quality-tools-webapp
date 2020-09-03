@@ -157,6 +157,7 @@ export default {
         XR: range_average_RChart,
         XS: variance_average_SChart
       };
+
       //!   Falta considerar caso n=1
       /*   Para carta de promedios todos tiene la forma
        *    Center Line = ̿x (promedio de promedios)
@@ -174,6 +175,66 @@ export default {
       const xBordes = [-1, dataAsArray.length + 1];
       //Factores para graficos
       const factors = factorsControlCharts(sampleSize);
+
+      //calcular elementos fuera de control
+      let OFC = {
+        average: [],
+        variability: []
+      };
+      //average
+      OFC.average = meanRows.map((el, index) => {
+        if (
+          el >=
+            meanAllRows +
+              factors[this.chartType].fProcess *
+                average_desviation[this.chartType] ||
+          el <=
+            meanAllRows -
+              factors[this.chartType].fProcess *
+                average_desviation[this.chartType]
+        ) {
+          return el;
+        }
+        return null;
+      });
+
+      console.log("ofc average: ", OFC.average);
+      //variability
+      OFC.variability = desviation[this.chartType].map((el, index) => {
+        if (
+          el >=
+            factors[this.chartType].fUCL * average_desviation[this.chartType] ||
+          el <=
+            factors[this.chartType].fLCL * average_desviation[this.chartType]
+        ) {
+          return el;
+        }
+        return null;
+      });
+
+      console.log("ofc variability: ", OFC.variability);
+
+      const OFC_average_markers = {
+        y: OFC.average,
+        mode: "markers",
+        name: "Out of Contron",
+        type: "scatter",
+        marker: {
+          color: "rgb(219, 64, 82)",
+          size: 12
+        }
+      };
+      const OFC_variability_markers = {
+        y: OFC.variability,
+        mode: "markers",
+        name: "Out of Control",
+        type: "scatter",
+        marker: {
+          color: "rgb(219, 64, 82)",
+          size: 12
+        }
+      };
+
       // Formar linea average plot proceso
       const averageProcess = {
         name: "Characteristic",
@@ -308,12 +369,19 @@ export default {
         }
       };
       return {
-        average: [averageProcess, averageCenterLine, averageUCL, averageLCL],
+        average: [
+          averageProcess,
+          averageCenterLine,
+          averageUCL,
+          averageLCL,
+          OFC_average_markers
+        ],
         variability: [
           variabilityProcess,
           variabilityCenterLine,
           variabilityUCL,
-          variabilityLCL
+          variabilityLCL,
+          OFC_variability_markers
         ]
       };
     }
