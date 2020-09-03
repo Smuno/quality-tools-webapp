@@ -22,7 +22,10 @@
     <b-row>
       <b-col>
         <!-- Nivel de inspeccion -->
-        <b-form-select v-model="inspectionLevel" v-bind:options="options"></b-form-select>
+        <b-form-select
+          v-model="inspectionLevel"
+          v-bind:options="options"
+        ></b-form-select>
         <!-- Tamaño del lote -->
         <b-form-input
           v-model="lotSize"
@@ -57,21 +60,17 @@
         <b-card no-body border-variant="primary">
           <!-- Header Card: Para mostrar datos de entrada en formulario -->
           <b-card-header>
-            <b-col>
-              <b-badge variant="primary" v-show="lotSize > 0">
-                Tamaño Lote: {{ lotSize }}
-              </b-badge>
-            </b-col>
-            <b-col>
-              <b-badge variant="primary" v-show="inspectionLevel"
-                >Nivel Inspección {{ inspectionLevel }}</b-badge
-              >
-            </b-col>
-            <b-col>
-              <b-badge variant="primary" v-show="aql > 0">
-                Acceptable Quality Level {{ aql }}
-              </b-badge>
-            </b-col>
+            <b-badge variant="primary" v-show="lotSize > 0">
+              Tamaño Lote: {{ lotSize }}
+            </b-badge>
+
+            <b-badge variant="primary" v-show="inspectionLevel"
+              >Nivel Inspección {{ inspectionLevel }}</b-badge
+            >
+
+            <b-badge variant="primary" v-show="aql > 0">
+              Acceptable Quality Level {{ aql }}
+            </b-badge>
           </b-card-header>
           <!-- Body card: Resultados del formulario -->
           <b-card-body class="text-center">
@@ -102,6 +101,12 @@ import { findRule, listAql } from "./InspectionMasterTable";
 
 export default {
   name: "TheLotAcceptance",
+  props: {
+    uniqueId: {
+      type: String,
+      default: "000AAA"
+    }
+  },
   data() {
     return {
       lotSize: null,
@@ -123,6 +128,26 @@ export default {
     rules: function() {
       return this.getRules(this.letter, this.aql);
     },
+    result: function() {
+      return {
+        metadata: { tool: "LotAcceptance", id: this.uniqueId },
+        data: [this.lotSize,this.inspectionLevel,this.aql],
+        header: {
+          tags: [
+            "Lot Size:" + this.lotSize,
+            "Inspection Type: " + this.inspectionLevel,
+            "Acceptable Quality Level: " + this.aql
+          ]
+        },
+        body: {
+          rules:{
+            reduced:[],
+            normal:this.rules,
+            tight:[]
+          }
+        }
+      };
+    }
   },
   mounted() {}
 };
