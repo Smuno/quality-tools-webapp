@@ -150,6 +150,11 @@ export default {
       this.textCurrentLevel = this.editor.getJSON().content[0].content[0].text;
       this.$forceUpdate();
       this.$emit("data-updated", this.allData);
+
+      if(!this.isThisTheEnd && this.isThisStarRoad){
+        this.$emit('star-road-data',[this.textCurrentLevel])
+      }
+
     },
     /** metodos para star road */
     //* Se un nivel para pasar al padre correspondiente
@@ -160,7 +165,7 @@ export default {
     createStarRoad: function() {
       const beforeToggle = _.cloneDeep(this.isThisStarRoad);
 
-      const textStarRoad=_.cloneDeep(this.textCurrentLevel)
+      const textStarRoad=this.textCurrentLevel
       this.$emit('star-road-data',[textStarRoad])
 
       this.$root.$emit("star-road-off");
