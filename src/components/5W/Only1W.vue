@@ -1,23 +1,24 @@
 <template>
   <div>
     <b-row>
-      <b-col
-        :class="variantRoad + ' mainCol'"
-        :md="colSize"
-        :id="actualLevel"
-      >
+      <b-col :class="variantRoad + ' mainCol'" :md="colSize" :id="actualLevel">
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
         <editor-content class="textFromThisLevel" :editor="editor" />
         <!-- Botones para añadir y remover sub-filas -->
         <b-button-group>
-          <b-button v-if="levelCol>0" @click="userClick" variant="success" size="sm">
+          <b-button
+            v-if="levelCol > 0"
+            @click="userClick"
+            variant="success"
+            size="sm"
+          >
             <b-icon icon="plus-circle" />
           </b-button>
           <b-button
             v-if="!isThisTheEnd"
             variant="dark"
             size="sm"
-            @click="isThisStarRoad = !isThisStarRoad"
+            @click="createStarRoad"
           >
             <b-icon
               :icon="isThisStarRoad ? 'star-fill' : 'star'"
@@ -43,7 +44,7 @@
           :levelCol="levelCol + 1"
           v-model="textNextCol"
           v-on:data-updated="listenColData($event)"
-          v-on:star-road="isThisStarRoad=$event"
+          v-on:star-road="isThisStarRoad = $event"
         >
         </Only1W>
       </b-col>
@@ -67,6 +68,7 @@
 
 <script>
 import { Editor, EditorContent } from "tiptap";
+import _ from "lodash";
 
 export default {
   name: "Only1W",
@@ -112,6 +114,7 @@ export default {
     /* En click controla si crear nueva linea o solicitar al padre que lo haga */
     userClick: function() {
       // Crear nueva linea solo si es padre - Funcion no requiere cambios
+      this.$root.$emit("star-road-off");
       if (this.amIaChild) {
         this.$emit("neednewrow");
       } else {
@@ -144,8 +147,16 @@ export default {
       this.$forceUpdate();
       this.$emit("data-updated", this.allData);
     },
-    nextFather:function(starRoad){
-      this.$emit("star-road",starRoad)
+    nextFather: function(starRoad) {
+      this.$emit("star-road", starRoad);
+    },
+    createStarRoad: function() {
+      const beforeToggle = _.cloneDeep(this.isThisStarRoad);
+      this.$root.$emit("star-road-off");
+      setTimeout(() => {
+        this.isThisStarRoad = !beforeToggle;
+        this.$emit("star-road", this.isThisStarRoad);
+      }, 10);
     }
   },
   computed: {
@@ -154,7 +165,7 @@ export default {
       const toreturn = this.yourLevel.concat(1);
       return toreturn;
     },
-    /* determina si debe terminar de dibujar columnas (limitado a 4 por contexto 5Why) */
+    /* determina si debe terminar de dibujar columnas (limitado a 4 por contexto 5Why) funciona al reves*/
     isThisTheEnd: function() {
       return this.levelCol < 4;
     },
@@ -193,7 +204,7 @@ export default {
       }
       return innerSize;
     },
-    /* Crea string para el nivel añadiendo puntos entre numeros- funciona bien */
+    /* Crea string para el nivel añadiendo puntos entre numeros*/
     actualLevel: function() {
       let stringLevel = "";
       this.yourLevel.forEach((el, index) => {
@@ -212,17 +223,24 @@ export default {
     }
   },
   mounted() {
+    //* event for star road
+    this.$root.$on("star-road-off", () => {
+      this.isThisStarRoad = false;
+    });
+    //* text editor
     let timeoutTyping = null;
+    const timeTyping=500
     this.editor = new Editor({
       content: "¿Por qué... " + this.actualLevel,
       onUpdate: () => {
         //Esperando que usuario termine de tipear
         clearTimeout(this.timeoutTyping);
-        this.timeoutTyping = setTimeout(this.textDataUpdate, 1000);
+        this.timeoutTyping = setTimeout(this.textDataUpdate, timeTyping);
       }
     });
   },
   beforeDestroy() {
+    this.$root.$off("star-road-off")
     this.editor.destroy();
   }
 };
