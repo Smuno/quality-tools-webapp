@@ -125,6 +125,8 @@ export default {
     },
     //Para remover una fila
     userClickRemove: function() {
+      this.$root.$emit("star-road-off");
+      this.$forceUpdate()
       this.listRow.pop();
     },
     /* Crea etiqueta de nivel para nueva fila */
@@ -149,9 +151,12 @@ export default {
       this.$forceUpdate();
       this.$emit("data-updated", this.allData);
     },
+    /** metodos para star road */
+    //* Se un nivel para pasar al padre correspondiente
     nextFather: function(nameEvent,starRoad) {
       this.$emit(nameEvent, starRoad);
     },
+    /** Se crea un nuevo camino de causa raiz  */
     createStarRoad: function() {
       const beforeToggle = _.cloneDeep(this.isThisStarRoad);
 
@@ -164,8 +169,8 @@ export default {
         this.$emit("star-road", this.isThisStarRoad);
       }, 10);
     },
+    //* Traspasa la data de manera paralela desde la causa raiz hasta The5W
     CALLroadData:function(dataFromBellow){
-      console.log('datafrom bellow: ',dataFromBellow)
       const textStarRoad=_.cloneDeep(this.textCurrentLevel)
       dataFromBellow.unshift(textStarRoad)
       this.$emit('star-road-data',dataFromBellow)
@@ -252,7 +257,6 @@ export default {
     });
   },
   beforeDestroy() {
-    this.$root.$off("star-road-off")
     this.editor.destroy();
   }
 };
