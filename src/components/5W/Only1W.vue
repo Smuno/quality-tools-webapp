@@ -45,6 +45,7 @@
           v-model="textNextCol"
           v-on:data-updated="listenColData($event)"
           v-on:star-road="isThisStarRoad = $event"
+          v-on:star-road-data="CALLroadData($event)"
         >
         </Only1W>
       </b-col>
@@ -59,7 +60,8 @@
         :amIaChild="true"
         v-on:neednewrow="userClick"
         v-on:data-updated="listenRowData(index, $event)"
-        v-on:star-road="nextFather($event)"
+        v-on:star-road="nextFather('star-road',$event)"
+        v-on:star-road-data="nextFather('star-road-data',$event)"
       >
       </Only1W>
     </div>
@@ -147,16 +149,26 @@ export default {
       this.$forceUpdate();
       this.$emit("data-updated", this.allData);
     },
-    nextFather: function(starRoad) {
-      this.$emit("star-road", starRoad);
+    nextFather: function(nameEvent,starRoad) {
+      this.$emit(nameEvent, starRoad);
     },
     createStarRoad: function() {
       const beforeToggle = _.cloneDeep(this.isThisStarRoad);
+
+      const textStarRoad=_.cloneDeep(this.textCurrentLevel)
+      this.$emit('star-road-data',[textStarRoad])
+
       this.$root.$emit("star-road-off");
       setTimeout(() => {
         this.isThisStarRoad = !beforeToggle;
         this.$emit("star-road", this.isThisStarRoad);
       }, 10);
+    },
+    CALLroadData:function(dataFromBellow){
+      console.log('datafrom bellow: ',dataFromBellow)
+      const textStarRoad=_.cloneDeep(this.textCurrentLevel)
+      dataFromBellow.unshift(textStarRoad)
+      this.$emit('star-road-data',dataFromBellow)
     }
   },
   computed: {
