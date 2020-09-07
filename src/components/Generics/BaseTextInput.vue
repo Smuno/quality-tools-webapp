@@ -54,7 +54,6 @@
 
 <script>
 //! evento: "new-text"
-// TODO Revisar si data es responsiva sin onUpdate
 //* editable or no editable -> no mostrar menu y no editar
 //? ¿está en una carta de resultado? -> mostrar menu on focus y editar
 //import Icon from 'Components/Icon'

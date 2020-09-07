@@ -130,7 +130,7 @@ export default {
     },
     result: function() {
       return {
-        metadata: { tool: "LotAcceptance", id: this.uniqueId },
+        metadata: { toolName: "Lot Acceptance", id: this.uniqueId },
         data: [this.lotSize,this.inspectionLevel,this.aql],
         header: {
           tags: [

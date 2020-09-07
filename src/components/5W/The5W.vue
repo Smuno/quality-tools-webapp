@@ -40,7 +40,7 @@ export default {
     result:function(){
       return {
         metadata: {
-          tool: "5W",
+          toolName: "5W",
           id: this.uniqueId
         },
         data: this.allData,

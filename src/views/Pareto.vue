@@ -141,9 +141,10 @@ export default {
     result: function() {
       return {
         metadata: {
-          tool: "PARETO",
+          toolName: "PARETO",
           id: this.uniqueId
         },
+        data: this.tableData,
         header: {
           tags: null
         },
@@ -153,8 +154,7 @@ export default {
           carta de control: elementos fuera de control
           */
           idTableResult: this.idTop80
-        },
-        data: this.tableData
+        }
       };
     }
   },

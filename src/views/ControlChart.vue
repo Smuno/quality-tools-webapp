@@ -402,7 +402,7 @@ export default {
     result: function() {
       return {
         metadata: {
-          tool: "ControlChart",
+          toolName: "Control Chart",
           id: this.uniqueId
         },
         data: this.tableData,
