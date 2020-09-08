@@ -192,7 +192,7 @@ export default {
         variability: []
       };
       //average
-      this.id_out_of_control.average=[]
+      this.id_out_of_control.average = [];
       OFC.average = meanRows.map((el, index) => {
         if (
           el >=
@@ -204,7 +204,7 @@ export default {
               factors[this.chartType].fProcess *
                 average_desviation[this.chartType]
         ) {
-          this.id_out_of_control.average.push(index)
+          this.id_out_of_control.average.push(index);
           return el;
         }
         return null;
@@ -212,7 +212,7 @@ export default {
 
       console.log("ofc average: ", OFC.average);
       //variability
-      this.id_out_of_control.variability=[]
+      this.id_out_of_control.variability = [];
       OFC.variability = desviation[this.chartType].map((el, index) => {
         if (
           el >=
@@ -220,7 +220,7 @@ export default {
           el <=
             factors[this.chartType].fLCL * average_desviation[this.chartType]
         ) {
-          this.id_out_of_control.variability.push(index)
+          this.id_out_of_control.variability.push(index);
           return el;
         }
         return null;
@@ -406,16 +406,18 @@ export default {
           id: this.uniqueId
         },
         data: this.tableData,
-        header: { tags:[this.chartType] },
+        header: { tags: [this.chartType] },
         body: {
           /* idTableResult es la id de los elementos en tabla que son relevantes:
           pareto: elementos que genera el 80% de los casos
           carta de control: elementos fuera de control (average and variability)
           */
-          analisis:null,
-          chartType:this.chartType,
-          idTableResult: this.id_out_of_control
-        },
+          analisis: null,
+          chartType: this.chartType,
+          outOfContolTableResult: this.tableData.filter((row, index) => {
+            if (this.id_out_of_control.includes(row.id)) return row;
+          })
+        }
       };
     }
   }

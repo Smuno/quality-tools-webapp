@@ -40,7 +40,7 @@ export default {
     result:function(){
       return {
         metadata: {
-          toolName: "5W",
+          toolName: "FiveWhy",
           id: this.uniqueId
         },
         data: this.allData,
@@ -50,7 +50,7 @@ export default {
           pareto: elementos que genera el 80% de los casos
           carta de control: elementos fuera de control (average and variability)
           */
-         the5W:this.startRoadData
+         rootCause5Why:this.startRoadData
         },
       };
     }

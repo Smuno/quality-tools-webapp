@@ -141,7 +141,7 @@ export default {
     result: function() {
       return {
         metadata: {
-          toolName: "PARETO",
+          toolName: "Pareto",
           id: this.uniqueId
         },
         data: this.tableData,
