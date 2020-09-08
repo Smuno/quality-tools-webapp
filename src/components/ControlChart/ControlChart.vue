@@ -40,14 +40,14 @@
 </template>
 
 <script>
-import FullTableEditorVertical from "../components/Generics/FullTableEditorVertical";
-import PlotlyGraph from "../components/Generics/PlotyGraph";
+import FullTableEditorVertical from "@/components/Generics/FullTableEditorVertical";
+import PlotlyGraph from "@/components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
   DEFAULT_OPTION_TABLE
-} from "../components/ControlChart/ControlChartConfig";
-import { factorsControlCharts } from "../components/ControlChart/FactorsControlCharts";
+} from "@/components/ControlChart/ControlChartConfig";
+import { factorsControlCharts } from "@/components/ControlChart/FactorsControlCharts";
 
 import { create, all } from "mathjs";
 

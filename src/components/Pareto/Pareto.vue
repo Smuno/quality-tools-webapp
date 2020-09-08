@@ -15,14 +15,15 @@
 </template>
 
 <script>
-import FullTableEditorVertical from "../components/Generics/FullTableEditorVertical";
-import PlotyGraph from "../components/Generics/PlotyGraph";
+import FullTableEditorVertical from "@/components/Generics/FullTableEditorVertical";
+import PlotyGraph from "@/components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
   DEFAULT_OPTION_TABLE
-} from "../components/Pareto/ParetoConfig";
+} from "@/components/Pareto/ParetoConfig";
 import _ from "lodash";
+
 export default {
   name: "Pareto",
   components: {
