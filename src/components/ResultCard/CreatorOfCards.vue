@@ -40,13 +40,15 @@
 import BaseTextInput from "../Generics/BaseTextInput";
 import FiveWhyBody from "../ResultCard/ToolsBody/FiveWhyBody";
 import ControlChartBody from "../ResultCard/ToolsBody/ControlChartBody";
+import LotAcceptanceBody from "@/components/ResultCard/ToolsBody/LotAcceptanceBody"
 
 export default {
   name: "CreatorOfCards",
   components: {
     BaseTextInput,
     FiveWhyBody,
-    ControlChartBody
+    ControlChartBody,
+    LotAcceptanceBody
   },
   props: {
     /**
@@ -107,7 +109,7 @@ export default {
         { text: this.toolMetaData.id, variant: "info" }
       ];
       // Se añaden los tags provenientes de la herramieta
-      badges.concat(
+      badges=badges.concat(
         this.toolHeader.tags.map((tag, index) => {
           return { text: tag, variant: "success" };
         })
@@ -123,14 +125,12 @@ export default {
       //determinar herramienta -> body component name
       let tool_name_component = "";
       let tool_result_component=this.toolBody
-      console.log('sdadas',this.toolBody)
       switch (this.toolMetaData.toolName) {
         case "FiveWhy":
           tool_name_component = "FiveWhyBody";
           break;
         case "Control Chart":
           tool_name_component = "ControlChartBody";
-
           break;
         case "LotAcceptance":
           tool_name_component = "LotAcceptanceBody";

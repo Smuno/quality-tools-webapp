@@ -179,9 +179,9 @@ const normalInspectionTable = [
   }
 ];
 
-const tightenedInspectionTable=[];
+const tightenedInspectionTable = [];
 
-const reducedInspectionTable=[];
+const reducedInspectionTable = [];
 
 const listAql = [
   0.01,
@@ -211,28 +211,26 @@ const listAql = [
   1000
 ];
 
+/** 
+ * @typedef {Object} Rules 
+ * @property {Number} acceptanceNumber -Acceptance sample rule
+ * @property {Number} rejectionNumber -Rejection sample rule
+*/
+
 /**
- *findeRule(letterSelected,aqlSelected)
- *
- * @param {*} letterSelected
- * @param {*} aqlSelected
- * @returns
+ *  Find the rule of acceptance & rejection for
+ * normal inspection (II)
+ * @param {String} rowLetter
+ * @param {Number} aqlSelected
+ * Acceptance Quality Limit
+ * @returns {Rules} the rules for the lot
  */
-function findRule(letterSelected, aqlSelected) {
-  // console.log("Executing findRule()");
-  // console.log("Buscando aql: ", aqlSelected);
-  // console.log("Buscando letra: ", letterSelected);
 
+function findRule(rowLetter, aqlSelected) {
   let rulefound = { acceptanceNumber: -1, rejectionNumber: -1 };
-  if (letterSelected !== null && aqlSelected !== null) {
+  if (rowLetter !== null && aqlSelected !== null) {
     normalInspectionTable.forEach(el => {
-      //      console.log("---------------")
-      //    console.log("Recorrido tabla",el)
-      //  console.log("aql include",el.aql === aqlSelected)
-      //console.log("letra include",el.letters.includes(letterSelected))
-      //console.log("---------------")
-
-      if (el.aql === aqlSelected && el.letters.includes(letterSelected)) {
+      if (el.aql === aqlSelected && el.letters.includes(rowLetter)) {
         console.log("Regla encontrada", el.rules);
         rulefound = el.rules;
       }
