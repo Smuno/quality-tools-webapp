@@ -96,8 +96,9 @@ export default {
         0,
         top80.length > 0 ? top80.length - 1 : 0
       );
-      const xId_top80 = xId.slice(0, top80.length > 0 ? top80.length - 1 : 0);
-
+      console.log('top80: ',top80)
+      const xId_top80 = xId.slice(0, top80.length > 0 ? top80.length  : 0);
+      console.log('xId_top80',xId_top80)
       this.idTop80 = xId_top80;
 
       // console.log('sorted')
@@ -147,17 +148,29 @@ export default {
         },
         data: this.tableData,
         header: {
-          tags: null
+          tags: []
         },
         body: {
           /* idTableResult es la id de los elementos en tabla que son relevantes:
           pareto: elementos que genera el 80% de los casos
           carta de control: elementos fuera de control
           */
-          idTableResult: this.idTop80
+          idTableResult: this.idTop80,
+          top80TableResult:this.tableData.filter((row, index) => {
+            if (this.idTop80.includes(row.id)) return row;
+          })
         }
       };
     }
+  },
+  watch: {
+    result: {
+      deep: true,
+      handler: function (val, oldVal) {
+        console.log('control chart result')
+        this.$emit('result-event',val)
+      }
+    },
   },
   mounted() {}
 };

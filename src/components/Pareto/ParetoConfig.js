@@ -1,6 +1,6 @@
 const DEFAULT_TABLE = [
-  { x0: "Cables rotos", x1: 22,id:'S0' },
-  { x0: "Sin materiales", x1: 10,id:'S1' }
+  { x0: "Cables rotos", x1: 22,id:0 },
+  { x0: "Sin materiales", x1: 10,id:1 }
 ];
 
 const DEFAULT_LAYOUT = {

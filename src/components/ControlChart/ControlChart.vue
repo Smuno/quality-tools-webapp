@@ -406,6 +406,7 @@ export default {
           */
           analysis: 'Sin analisis por el momento',
           chartType: this.chartType,
+          id_out_of_control:this.id_out_of_control,
           outOfContolTableResult: this.tableData.filter((row, index) => {
             if (this.id_out_of_control.average.includes(row.id)) return row;
           })

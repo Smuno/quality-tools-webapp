@@ -41,6 +41,7 @@ import BaseTextInput from "../Generics/BaseTextInput";
 import FiveWhyBody from "../ResultCard/ToolsBody/FiveWhyBody";
 import ControlChartBody from "../ResultCard/ToolsBody/ControlChartBody";
 import LotAcceptanceBody from "@/components/ResultCard/ToolsBody/LotAcceptanceBody"
+import ParetoBody from "@/components/ResultCard/ToolsBody/ParetoBody"
 
 export default {
   name: "CreatorOfCards",
@@ -48,7 +49,8 @@ export default {
     BaseTextInput,
     FiveWhyBody,
     ControlChartBody,
-    LotAcceptanceBody
+    LotAcceptanceBody,
+    ParetoBody
   },
   props: {
     /**
