@@ -1,6 +1,10 @@
 <template>
   <b-list-group flush id="FiveWhy List">
-    <b-list-group-item v-for="(question, index) in resultData" :key="index" :variant="index==4?'warning':''">
+    <b-list-group-item
+      v-for="(question, index) in resultBody.rootCause5Why"
+      :key="index"
+      :variant="index == 4 ? 'warning' : ''"
+    >
       {{ question }}
     </b-list-group-item>
   </b-list-group>
@@ -10,10 +14,12 @@
 export default {
   name: "FiveWhyBody",
   props: {
-    resultData: {
+    resultBody: {
       require: true,
-      type: Array
+      type:Object
     }
+  },
+  mounted() {
   }
 };
 </script>

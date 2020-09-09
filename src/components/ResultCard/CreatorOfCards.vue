@@ -21,13 +21,15 @@
         -->
       <base-text-input
         @new-text="onTextInputChange(bodyDescription, $event)"
-        :contentForEditor="'<h2>Ingresa un Titulo,</h2><p>Añade una descripcion a tu carta de resultado <3</p>'"
+        :contentForEditor="
+          '<h2>Ingresa un Titulo,</h2><p>Añade una descripcion a tu carta de resultado <3</p>'
+        "
         :isEditable="true"
         :onCard="true"
       />
       <component
         :is="currentTool.name"
-        :resultData="currentTool.data"
+        :resultBody="currentTool.data"
       ></component>
     </b-card-body>
     <b-card-footer> </b-card-footer>
@@ -43,7 +45,8 @@ export default {
   name: "CreatorOfCards",
   components: {
     BaseTextInput,
-    FiveWhyBody
+    FiveWhyBody,
+    ControlChartBody
   },
   props: {
     /**
@@ -119,23 +122,21 @@ export default {
     currentTool: function() {
       //determinar herramienta -> body component name
       let tool_name_component = "";
-      let tool_result_component;
+      let tool_result_component=this.toolBody
+      console.log('sdadas',this.toolBody)
       switch (this.toolMetaData.toolName) {
         case "FiveWhy":
           tool_name_component = "FiveWhyBody";
-          tool_result_component = this.toolBody.rootCause5Why;
           break;
-        case "ControlChart":
+        case "Control Chart":
           tool_name_component = "ControlChartBody";
-          tool_result_component = this.toolBody.outOfContolTableResult;
+
           break;
         case "LotAcceptance":
           tool_name_component = "LotAcceptanceBody";
-          tool_result_component;
           break;
         case "Pareto":
           tool_name_component = "ParetoBody";
-          tool_result_component;
           break;
         default:
           break;

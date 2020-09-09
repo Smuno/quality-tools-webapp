@@ -38,7 +38,6 @@ export default {
   },
   computed: {
     result:function(){
-      console.log('result: ')
       this.$emit('result-event')
       return {
         metadata: {

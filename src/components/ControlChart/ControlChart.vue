@@ -75,8 +75,8 @@ export default {
       plotlyLayout: DEFAULT_LAYOUT,
       chartType: "XR",
       id_out_of_control: {
-        average: null,
-        variability: null
+        average: [],
+        variability: []
       }
     };
   },
@@ -107,14 +107,6 @@ export default {
       );
       console.log(newColumns);
       this.tableOptions.columns = newColumns;
-    }
-  },
-  watch: {
-    tableData: {
-      handler: function(newValue) {
-        this.columnAssing(newValue);
-      },
-      deep: true
     }
   },
   mounted() {},
@@ -412,14 +404,29 @@ export default {
           pareto: elementos que genera el 80% de los casos
           carta de control: elementos fuera de control (average and variability)
           */
-          analisis: null,
+          analysis: 'Sin analisis por el momento',
           chartType: this.chartType,
           outOfContolTableResult: this.tableData.filter((row, index) => {
-            if (this.id_out_of_control.includes(row.id)) return row;
+            if (this.id_out_of_control.average.includes(row.id)) return row;
           })
         }
       };
     }
-  }
+  },
+  watch: {
+    tableData: {
+      handler: function(newValue) {
+        this.columnAssing(newValue);
+      },
+      deep: true
+    },
+    result: {
+      deep: true,
+      handler: function (val, oldVal) {
+        console.log('control chart result')
+        this.$emit('result-event',val)
+      }
+    },
+  },
 };
 </script>
