@@ -19,17 +19,16 @@
           Lot Acceptance: Las 3 reglas de aceptacion
           Control Chart: Indicar tipo de grafico - muestras fuera de control (mini grafico?) + analisis
         -->
-
+      <base-text-input
+        @new-text="onTextInputChange(bodyDescription, $event)"
+        :contentForEditor="'<h2>Ingresa un Titulo,</h2><p>Añade una descripcion a tu carta de resultado <3</p>'"
+        :isEditable="true"
+        :onCard="true"
+      />
       <component
         :is="currentTool.name"
         :resultData="currentTool.data"
       ></component>
-
-      <base-text-input
-        @new-text="onTextInputChange(bodyDescription, $event)"
-        :isEditable="true"
-        :onCard="true"
-      />
     </b-card-body>
     <b-card-footer> </b-card-footer>
   </b-card>
@@ -102,7 +101,7 @@ export default {
       // Se añaden los tags fijos: toolName e id
       let badges = [
         { text: this.toolMetaData.toolName, variant: "primary" },
-        { text: this.toolMetaData.id, variant: "light" }
+        { text: this.toolMetaData.id, variant: "info" }
       ];
       // Se añaden los tags provenientes de la herramieta
       badges.concat(

@@ -22,7 +22,7 @@ export default {
   props: {
     uniqueId: {
       type: String,
-      default: "DDDAAA"
+      default: "#DDDAAA"
     }
   },
   data() {
@@ -38,6 +38,8 @@ export default {
   },
   computed: {
     result:function(){
+      console.log('result: ')
+      this.$emit('result-event')
       return {
         metadata: {
           toolName: "FiveWhy",
@@ -50,11 +52,19 @@ export default {
           pareto: elementos que genera el 80% de los casos
           carta de control: elementos fuera de control (average and variability)
           */
-         rootCause5Why:this.startRoadData
+         rootCause5Why:this.starRoadData
         },
       };
     }
-  }
+  },
+  watch: {
+    result: {
+      deep: true,
+      handler: function (val, oldVal) {
+        this.$emit('result-event',val)
+      }
+    },
+  },
 };
 </script>
 
