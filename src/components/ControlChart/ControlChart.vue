@@ -49,9 +49,9 @@ import {
 } from "@/components/ControlChart/ControlChartConfig";
 import { factorsControlCharts } from "@/components/ControlChart/FactorsControlCharts";
 
-import { create, all } from "mathjs";
+import { min,max,mean } from "mathjs/number";
 
-const math = create(all);
+const math = {min,max,mean}
 
 export default {
   name: "ControlChart",
