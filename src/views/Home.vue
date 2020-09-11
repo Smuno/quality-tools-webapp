@@ -27,7 +27,8 @@ export default {
       this.bodyTextUserInput=indata
     }
   },
-  mounted() {},
+  mounted() {
+  },
   beforeDestroy() {}
 };
 </script>

@@ -1,11 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+
+import Store from "../store/index"
+
 import Home from "../views/Home.vue";
 import The5W from "@/components/5W/The5W.vue";
 import Pareto from "@/components/Pareto/Pareto.vue";
 import ControlChart from "@/components/ControlChart/ControlChart.vue";
 import TheLotAcceptance from "@/components/Quality/TheLotAcceptance.vue";
-import TheToolView from "@/views/TheToolView.vue"
+import TheToolView from "@/views/TheToolView.vue";
 
 Vue.use(VueRouter);
 
@@ -52,12 +55,20 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const answer = window.confirm('Do you really want to leave? you have unsaved changes!')
-  if (answer) {
-    next()
+  if ((to.fullPath !== from.fullPath) && !Store.state.isDataSave) {
+    const answer = window.confirm(
+      "Do you really want to leave? you have unsaved changes!"
+    );
+    if (answer) {
+      next();
+      Store.commit("set_isDataSave", false)
+    } else {
+      next(false);
+    }
   } else {
-    next(false)
+    next();
+    Store.commit("set_isDataSave", false)
   }
-})
+});
 
 export default router;
