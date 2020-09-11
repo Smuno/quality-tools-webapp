@@ -37,20 +37,15 @@
 </template>
 
 <script>
-import BaseTextInput from "../Generics/BaseTextInput";
-import FiveWhyBody from "../ResultCard/ToolsBody/FiveWhyBody";
-import ControlChartBody from "../ResultCard/ToolsBody/ControlChartBody";
-import LotAcceptanceBody from "@/components/ResultCard/ToolsBody/LotAcceptanceBody"
-import ParetoBody from "@/components/ResultCard/ToolsBody/ParetoBody"
 
 export default {
   name: "CreatorOfCards",
   components: {
-    BaseTextInput,
-    FiveWhyBody,
-    ControlChartBody,
-    LotAcceptanceBody,
-    ParetoBody
+    BaseTextInput:()=>import("../Generics/BaseTextInput"),
+    FiveWhyBody:()=>import("../ResultCard/ToolsBody/FiveWhyBody"),
+    ControlChartBody:()=>import("../ResultCard/ToolsBody/ControlChartBody"),
+    LotAcceptanceBody:()=>import("@/components/ResultCard/ToolsBody/LotAcceptanceBody"),
+    ParetoBody:()=>import("@/components/ResultCard/ToolsBody/ParetoBody")
   },
   props: {
     /**
