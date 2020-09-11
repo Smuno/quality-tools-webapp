@@ -231,7 +231,6 @@ function findRule(rowLetter, aqlSelected) {
   if (rowLetter !== null && aqlSelected !== null) {
     normalInspectionTable.forEach(el => {
       if (el.aql === aqlSelected && el.letters.includes(rowLetter)) {
-        console.log("Regla encontrada", el.rules);
         rulefound = el.rules;
       }
     });

@@ -105,7 +105,6 @@ export default {
           1
         )[0] // and continuing for one item
       );
-      console.log(newColumns);
       this.tableOptions.columns = newColumns;
     }
   },
@@ -202,7 +201,6 @@ export default {
         return null;
       });
 
-      console.log("ofc average: ", OFC.average);
       //variability
       this.id_out_of_control.variability = [];
       OFC.variability = desviation[this.chartType].map((el, index) => {
@@ -218,7 +216,6 @@ export default {
         return null;
       });
 
-      console.log("ofc variability: ", OFC.variability);
 
       const OFC_average_markers = {
         y: OFC.average,
@@ -424,7 +421,6 @@ export default {
     result: {
       deep: true,
       handler: function (val, oldVal) {
-        console.log('control chart result')
         this.$emit('result-event',val)
       }
     },

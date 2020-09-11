@@ -154,7 +154,6 @@ export default {
     result: {
       deep: true,
       handler: function(val, oldVal) {
-        console.log("control chart result");
         this.$emit("result-event", val);
       }
     }
