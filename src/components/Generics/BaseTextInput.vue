@@ -154,7 +154,6 @@ export default {
         clearTimeout(this.timeoutTyping);
         this.timeoutTyping = setTimeout(() => {
           this.textHTML = value.getHTML();
-          console.log(value.getHTML());
         }, timeAfterTyping);
       },
       onFocus: focusData => {

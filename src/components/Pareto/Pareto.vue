@@ -103,18 +103,9 @@ export default {
         0,
         top80.length > 0 ? top80.length - 1 : 0
       );
-      console.log('top80: ',top80)
       const xId_top80 = xId.slice(0, top80.length > 0 ? top80.length  : 0);
-      console.log('xId_top80',xId_top80)
       this.idTop80 = xId_top80;
-
-      // console.log('sorted')
-      // console.log('names: ',xNames)
-      // console.log('id: ',xId)
-      // console.log('porcentaje: ',porcentajes)
-      // console.log('top80%: ',top80,' length: ',top80.length)
-      // console.log('xId_top80: ',xId_top80)
-
+      
       const yBar = sorted.map(el => {
         return parseInt(el.x1);
       });

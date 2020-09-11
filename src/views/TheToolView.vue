@@ -1,10 +1,10 @@
 <template>
   <b-container fluid>
-    <b-button v-b-modal="'creator-modal'">Show Card</b-button>
+    <b-button @click="modal_showModal">Show Card</b-button>
     <b-row>
       <router-view @result-event="listen_result($event)" />
     </b-row>
-    <b-modal id="creator-modal">
+    <b-modal ref="creator-modal">
       <creator-of-cards
         v-if="resultFromTool"
         :toolMetaData="resultFromTool.metadata"
@@ -13,6 +13,9 @@
         :toolBody="resultFromTool.body"
       />
       <h5 v-else>Sin resultados</h5>
+      <template v-slot:modal-footer>
+        <b-button @click="modal_SaveCard">Save</b-button>
+      </template>
     </b-modal>
   </b-container>
 </template>
@@ -32,6 +35,13 @@ export default {
   methods: {
     listen_result: function(newResult) {
       this.resultFromTool = newResult;
+    },
+    modal_showModal: function() {
+      this.$refs["creator-modal"].show();
+    },
+    modal_SaveCard: function() {
+      this.$store.commit("set_isDataSave", true);
+      this.$refs["creator-modal"].hide();
     }
   }
 };
