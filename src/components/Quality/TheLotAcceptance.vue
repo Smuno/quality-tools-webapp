@@ -130,8 +130,8 @@ export default {
     },
     result: function() {
       return {
-        metadata: { tool: "LotAcceptance", id: this.uniqueId },
-        data: [this.lotSize,this.inspectionLevel,this.aql],
+        metadata: { toolName: "LotAcceptance", id: this.uniqueId },
+        data: [this.lotSize, this.inspectionLevel, this.aql],
         header: {
           tags: [
             "Lot Size:" + this.lotSize,
@@ -140,13 +140,23 @@ export default {
           ]
         },
         body: {
-          rules:{
-            reduced:[],
-            normal:this.rules,
-            tight:[]
-          }
+          rules: {
+            reduced: [],
+            normal: this.rules,
+            tight: []
+          },
+          sampleSize:this.gestSampleSize(this.letter)
         }
       };
+    }
+  },
+  watch: {
+    result: {
+      deep: true,
+      handler: function(val, oldVal) {
+        console.log("control chart result");
+        this.$emit("result-event", val);
+      }
     }
   },
   mounted() {}

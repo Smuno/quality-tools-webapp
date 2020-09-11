@@ -15,14 +15,15 @@
 </template>
 
 <script>
-import FullTableEditorVertical from "../components/Generics/FullTableEditorVertical";
-import PlotyGraph from "../components/Generics/PlotyGraph";
+import FullTableEditorVertical from "@/components/Generics/FullTableEditorVertical";
+import PlotyGraph from "@/components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
   DEFAULT_OPTION_TABLE
-} from "../components/Pareto/ParetoConfig";
+} from "@/components/Pareto/ParetoConfig";
 import _ from "lodash";
+
 export default {
   name: "Pareto",
   components: {
@@ -30,6 +31,9 @@ export default {
     FullTableEditorVertical
   },
   props: {
+    /** 
+     * Unique id to identify the instance of the tool
+    */
     uniqueId: {
       type: String,
       default: "123FFF"
@@ -43,18 +47,22 @@ export default {
       tableOptions: DEFAULT_OPTION_TABLE,
       /** Layout to plotly */
       plotlyLayout: DEFAULT_LAYOUT,
-      /**  */
+      /**
+       * @params {array} id of rows that are the first top 80%
+       */
       idTop80: [0]
     };
   },
   methods: {},
   computed: {
+     /** 
+       * Computed Property
+       * @returns {Array} set of objects to be use by plotly.js (plotlygraph.vue)
+      */
     plotData: function() {
       //calculo de los datos para plot con depencencia de los datos de tabla
       // x0: Name / x2:value
       //entregar ordenado de mayor a menor
-      //! problema como elementos no definidos
-
       let sorted = _.cloneDeep(this.tableData).sort((a, b) => {
         return parseInt(b.x1) - parseInt(a.x1);
       });
@@ -95,8 +103,9 @@ export default {
         0,
         top80.length > 0 ? top80.length - 1 : 0
       );
-      const xId_top80 = xId.slice(0, top80.length > 0 ? top80.length - 1 : 0);
-
+      console.log('top80: ',top80)
+      const xId_top80 = xId.slice(0, top80.length > 0 ? top80.length  : 0);
+      console.log('xId_top80',xId_top80)
       this.idTop80 = xId_top80;
 
       // console.log('sorted')
@@ -111,12 +120,19 @@ export default {
       });
       const yLine = porcentajes;
       /* Seteo de datos para plotear */
+      /** 
+       * @constant {Object} .Data of vertical bars to plotly 
+      */
       const bar = {
         x: xNames,
         y: yBar,
         name: "Problemas",
         type: "bar"
       };
+
+      /** 
+       * @constant {Object} .Data of markers for the first 80%
+      */
       const topbar = {
         x: xNames,
         y: top80,
@@ -129,6 +145,10 @@ export default {
           size: 12
         }
       };
+
+      /** 
+       * @constant {Object} .Data of accumulative percentage 
+      */
       const line = {
         x: xNames,
         y: yLine,
@@ -141,22 +161,52 @@ export default {
     result: function() {
       return {
         metadata: {
-          tool: "PARETO",
+          toolName: "Pareto",
           id: this.uniqueId
         },
+        data: this.tableData,
         header: {
-          tags: null
+          /** 
+           * @type {Array} Set of tags (string) to be
+           * display on result card
+          */
+          tags: []
         },
         body: {
-          /* idTableResult es la id de los elementos en tabla que son relevantes:
-          pareto: elementos que genera el 80% de los casos
-          carta de control: elementos fuera de control
+          /** 
+           * @type {}
           */
-          idTableResult: this.idTop80
-        },
-        data: this.tableData
+          idTableResult: this.idTop80,
+          /** 
+           * @type {Array}
+           * set of Table elements (Object) of the top 80%
+           * | x0 : descripcion
+           * | x1 : value
+           * | id : row id
+          */
+          top80TableResult:this.tableData.filter((row, index) => {
+            if (this.idTop80.includes(row.id)) return row;
+          })
+        }
       };
     }
+  },
+  watch: {
+    /** 
+     * Watching change on result on any level
+     * to emit event 'result-event'
+    */
+    result: {
+      deep: true,
+      handler: function (NewResult) {
+        /** 
+         * Event for ToolView
+         * @property {Object} NewResult
+         * New result data to be send to parent component (should be to TheToolView)
+        */
+        this.$emit('result-event',NewResult)
+      }
+    },
   },
   mounted() {}
 };

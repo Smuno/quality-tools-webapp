@@ -40,14 +40,14 @@
 </template>
 
 <script>
-import FullTableEditorVertical from "../components/Generics/FullTableEditorVertical";
-import PlotlyGraph from "../components/Generics/PlotyGraph";
+import FullTableEditorVertical from "@/components/Generics/FullTableEditorVertical";
+import PlotlyGraph from "@/components/Generics/PlotyGraph";
 import {
   DEFAULT_LAYOUT,
   DEFAULT_TABLE,
   DEFAULT_OPTION_TABLE
-} from "../components/ControlChart/ControlChartConfig";
-import { factorsControlCharts } from "../components/ControlChart/FactorsControlCharts";
+} from "@/components/ControlChart/ControlChartConfig";
+import { factorsControlCharts } from "@/components/ControlChart/FactorsControlCharts";
 
 import { create, all } from "mathjs";
 
@@ -75,8 +75,8 @@ export default {
       plotlyLayout: DEFAULT_LAYOUT,
       chartType: "XR",
       id_out_of_control: {
-        average: null,
-        variability: null
+        average: [],
+        variability: []
       }
     };
   },
@@ -107,14 +107,6 @@ export default {
       );
       console.log(newColumns);
       this.tableOptions.columns = newColumns;
-    }
-  },
-  watch: {
-    tableData: {
-      handler: function(newValue) {
-        this.columnAssing(newValue);
-      },
-      deep: true
     }
   },
   mounted() {},
@@ -192,7 +184,7 @@ export default {
         variability: []
       };
       //average
-      this.id_out_of_control.average=[]
+      this.id_out_of_control.average = [];
       OFC.average = meanRows.map((el, index) => {
         if (
           el >=
@@ -204,7 +196,7 @@ export default {
               factors[this.chartType].fProcess *
                 average_desviation[this.chartType]
         ) {
-          this.id_out_of_control.average.push(index)
+          this.id_out_of_control.average.push(index);
           return el;
         }
         return null;
@@ -212,7 +204,7 @@ export default {
 
       console.log("ofc average: ", OFC.average);
       //variability
-      this.id_out_of_control.variability=[]
+      this.id_out_of_control.variability = [];
       OFC.variability = desviation[this.chartType].map((el, index) => {
         if (
           el >=
@@ -220,7 +212,7 @@ export default {
           el <=
             factors[this.chartType].fLCL * average_desviation[this.chartType]
         ) {
-          this.id_out_of_control.variability.push(index)
+          this.id_out_of_control.variability.push(index);
           return el;
         }
         return null;
@@ -402,22 +394,40 @@ export default {
     result: function() {
       return {
         metadata: {
-          tool: "ControlChart",
+          toolName: "Control Chart",
           id: this.uniqueId
         },
         data: this.tableData,
-        header: { tags:[this.chartType] },
+        header: { tags: [this.chartType] },
         body: {
           /* idTableResult es la id de los elementos en tabla que son relevantes:
           pareto: elementos que genera el 80% de los casos
           carta de control: elementos fuera de control (average and variability)
           */
-          analisis:null,
-          chartType:this.chartType,
-          idTableResult: this.id_out_of_control
-        },
+          analysis: 'Sin analisis por el momento',
+          chartType: this.chartType,
+          id_out_of_control:this.id_out_of_control,
+          outOfContolTableResult: this.tableData.filter((row, index) => {
+            if (this.id_out_of_control.average.includes(row.id)) return row;
+          })
+        }
       };
     }
-  }
+  },
+  watch: {
+    tableData: {
+      handler: function(newValue) {
+        this.columnAssing(newValue);
+      },
+      deep: true
+    },
+    result: {
+      deep: true,
+      handler: function (val, oldVal) {
+        console.log('control chart result')
+        this.$emit('result-event',val)
+      }
+    },
+  },
 };
 </script>
