@@ -55,21 +55,5 @@ const router = new VueRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
-  if (to.fullPath !== from.fullPath && !Store.state.isDataSave) {
-    const answer = window.confirm(
-      "Do you really want to leave? you have unsaved changes!"
-    );
-    if (answer) {
-      next();
-      Store.commit("set_isDataSave", false);
-    } else {
-      next(false);
-    }
-  } else {
-    next();
-    Store.commit("set_isDataSave", false);
-  }
-});
 
 export default router;

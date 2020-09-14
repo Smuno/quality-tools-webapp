@@ -2,7 +2,9 @@
   <b-container fluid>
     <b-button @click="modal_showModal">Show Card</b-button>
     <b-row>
-      <router-view @result-event="listen_result($event)" />
+      <keep-alive>
+        <router-view @result-event="listen_result($event)" />
+      </keep-alive>
     </b-row>
     <b-modal ref="creator-modal">
       <creator-of-cards
