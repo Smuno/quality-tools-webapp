@@ -48,10 +48,9 @@ import {
   DEFAULT_OPTION_TABLE
 } from "@/components/ControlChart/ControlChartConfig";
 import { factorsControlCharts } from "@/components/ControlChart/FactorsControlCharts";
-
-import { min,max,mean } from "mathjs/number";
-
-const math = {min,max,mean}
+import { min, max, mean } from "mathjs/number";
+import _ from "lodash";
+const math = { min, max, mean };
 
 export default {
   name: "ControlChart",
@@ -112,11 +111,21 @@ export default {
   computed: {
     plotData: function() {
       //$ Tamaño muestral - Solo se considera caso de tamaño muestral igual
-      const idRows = [...this.tableData].map(rowObj => {
+      let cloneTable=_.cloneDeep(this.tableData)
+      const idRows = cloneTable.map(rowObj => {
         return rowObj.id;
       });
-      const dataAsArray = [...this.tableData].map(rowObj => {
+      console.log('before cloneTable: ',cloneTable)
+      cloneTable.forEach((el,index)=>{
+        delete el['id']
+      })
+      console.log('after cloneTable: ',cloneTable)
+      /** 
+       * array of arrays, each element is a row
+      */
+      const dataAsArray = cloneTable.map(rowObj => {
         const rowValues = Object.values(rowObj);
+
         rowValues.pop();
         return rowValues.map(el => {
           return parseFloat(el);
@@ -216,7 +225,6 @@ export default {
         return null;
       });
 
-
       const OFC_average_markers = {
         y: OFC.average,
         mode: "markers",
@@ -235,6 +243,23 @@ export default {
         marker: {
           color: "rgb(219, 64, 82)",
           size: 12
+        }
+      };
+
+      const averageHistogram = {
+        name: "Distribution",
+        type: "histogram",
+        orientation: 'h',
+        opacity: 0.7,
+        y: meanRows,
+        xaxis: "x2",
+        yaxis: "y",
+        marker: {
+          color: "blue",
+          line: {
+            color: "white",
+            width: 1
+          }
         }
       };
 
@@ -307,7 +332,24 @@ export default {
           dash: "dash"
         }
       };
-      //
+
+      const variabilityHistogram = {
+        name: "Distribution",
+        type: "histogram",
+        orientation: 'h',
+        y: desviation[this.chartType],
+        xaxis: "x2",
+        yaxis: "y",
+        opacity: 0.7,
+        marker: {
+          color: "blue",
+          line: {
+            color: "white",
+            width: 1
+          }
+        }
+      };
+
       //Formar linea variability plot proceso
       const variabilityProcess = {
         name: "Variability Process",
@@ -377,14 +419,16 @@ export default {
           averageCenterLine,
           averageUCL,
           averageLCL,
-          OFC_average_markers
+          OFC_average_markers,
+          averageHistogram
         ],
         variability: [
           variabilityProcess,
           variabilityCenterLine,
           variabilityUCL,
           variabilityLCL,
-          OFC_variability_markers
+          OFC_variability_markers,
+          variabilityHistogram
         ]
       };
     },
@@ -401,9 +445,9 @@ export default {
           pareto: elementos que genera el 80% de los casos
           carta de control: elementos fuera de control (average and variability)
           */
-          analysis: 'Sin analisis por el momento',
+          analysis: "Sin analisis por el momento",
           chartType: this.chartType,
-          id_out_of_control:this.id_out_of_control,
+          id_out_of_control: this.id_out_of_control,
           outOfContolTableResult: this.tableData.filter((row, index) => {
             if (this.id_out_of_control.average.includes(row.id)) return row;
           })
@@ -420,10 +464,10 @@ export default {
     },
     result: {
       deep: true,
-      handler: function (val, oldVal) {
-        this.$emit('result-event',val)
+      handler: function(val, oldVal) {
+        this.$emit("result-event", val);
       }
-    },
-  },
+    }
+  }
 };
 </script>
