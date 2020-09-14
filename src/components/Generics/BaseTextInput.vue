@@ -131,10 +131,10 @@ export default {
     }
   },
   computed: {
-    /** Saber si mostrar de manera permanente 
+    /** Saber si mostrar de manera permanente
      * mostrar permanente o toglear en foco del editor
      * @deprecated
-    */
+     */
     showMenu: function() {
       if (this.onCard && this.isEditable) {
         if (this.isOnFocus) {
@@ -185,12 +185,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .editorContent {
   padding: 0rem;
   text-align: left;
+  outline: none;
 }
-// *
-//   &:focus
-//     outline none
+.ProseMirror-focused {
+  outline: none;
+}
 </style>
