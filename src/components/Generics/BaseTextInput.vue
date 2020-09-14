@@ -1,12 +1,14 @@
 <template>
   <b-container>
     <!-- Menu para editar texto -->
-    <b-row no-gutters v-if="isEditable" v-show="showMenu">
+    <b-row no-gutters v-if="isEditable">
+      <!-- Change menu-bar for menu bubble -->
       <editor-menu-bar :editor="editor" v-slot="{ commands, isActive }">
         <b-button-toolbar>
           <b-button-group size="sm">
             <b-button
               title="Paragraph"
+              @focus="toolbarFocus()"
               :variant="variantType(isActive.paragraph())"
               @click="commands.paragraph"
             >
@@ -38,7 +40,6 @@
                 <b-icon icon="type-h3" />
               </b-dropdown-item>
             </b-dropdown>
-            
           </b-button-group>
         </b-button-toolbar>
       </editor-menu-bar>
@@ -46,7 +47,7 @@
     <!-- Espacio de edicion de texto -->
     <b-row no-gutters>
       <b-col>
-        <EditorContent class="editorContent" :editor="editor" />
+        <editor-content class="editorContent" :editor="editor" />
       </b-col>
     </b-row>
   </b-container>
@@ -84,15 +85,25 @@ export default {
     EditorMenuBar
   },
   props: {
+    /**
+     * toggle between edit text and only show text
+     */
     isEditable: {
       type: Boolean,
       default: true
     },
+    /**
+     * HTML string of text to show at the start of the editor
+     */
     contentForEditor: {
       type: String,
       default:
         "<h1>Hola!,</h1><p>Ejemplo de texto, un poco largo para ver como queda y ver aun si extiendo por sobre</p>"
     },
+    /**
+     * to know if is component is on a Card
+     * @deprecated no longer used
+     */
     onCard: {
       type: Boolean,
       default: false
@@ -107,6 +118,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * toggle if style on text is used
+     */
     variantType: function(isActive) {
       // Para cambiar estilo de botones menu
       if (isActive) {
@@ -117,10 +131,11 @@ export default {
     }
   },
   computed: {
+    /** Saber si mostrar de manera permanente 
+     * mostrar permanente o toglear en foco del editor
+     * @deprecated
+    */
     showMenu: function() {
-      /* Saber si mostrar de manera permanente 
-       mostrar permanente
-       o toglear en foco del editor*/
       if (this.onCard && this.isEditable) {
         if (this.isOnFocus) {
           return true;
@@ -175,4 +190,7 @@ export default {
   padding: 0rem;
   text-align: left;
 }
+// *
+//   &:focus
+//     outline none
 </style>
