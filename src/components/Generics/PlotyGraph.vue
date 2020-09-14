@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Plotly from "plotly.js-dist";
+import Plotly from "plotly.js-cartesian-dist";
 
 /** 
  * Simple Plotly Wrapper 

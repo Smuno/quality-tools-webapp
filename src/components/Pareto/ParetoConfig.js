@@ -1,6 +1,6 @@
 const DEFAULT_TABLE = [
-  { x0: "Cables rotos", x1: 22 },
-  { x0: "Sin materiales", x1: 10 }
+  { x0: "Cables rotos", x1: 22,id:0 },
+  { x0: "Sin materiales", x1: 10,id:1 }
 ];
 
 const DEFAULT_LAYOUT = {
@@ -24,10 +24,11 @@ const DEFAULT_LAYOUT = {
 const DEFAULT_OPTION_TABLE = {
   clipboard: true,
   layoutColumnsOnNewData: true,
-  layout: "fitColumns",
+  autoResize:true,
+  layout: "fitData",
   height: "400px",
   columns: [
-    { field: "x0", title: "Name", editor: true, widthGrow: 2 },
+    { field: "x0", title: "Name", editor: true,},
     { field: "x1", title: "Value", editor: true, hozAlign: "center" }
   ],
 };

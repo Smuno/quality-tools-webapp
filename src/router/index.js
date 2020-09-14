@@ -1,10 +1,15 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
-import Tempo from "../views/Tempo.vue";
-import Pareto from "../views/Pareto.vue";
-import ControlChart from "../views/ControlChart.vue";
-import LotAcceptance from "../views/LotAcceptance.vue";
+
+import Store from "../store/index";
+
+const Home = () => import("../views/Home.vue");
+const The5W = () => import("@/components/5W/The5W.vue");
+const Pareto = () => import("@/components/Pareto/Pareto.vue");
+const ControlChart = () => import("@/components/ControlChart/ControlChart.vue");
+const TheLotAcceptance = () =>
+  import("@/components/Quality/TheLotAcceptance.vue");
+const TheToolView = () => import("@/views/TheToolView.vue");
 
 Vue.use(VueRouter);
 
@@ -16,28 +21,31 @@ const routes = [
     component: Home
   },
   {
-    path: "/tempo",
-    name: "tempo",
-    meta: { index: 1 },
-    component: Tempo
-  },
-  {
-    path: "/pareto",
-    name: "pareto",
-    meta: { index: 2 },
-    component: Pareto
-  },
-  {
-    path: "/ControlChart",
-    name: "Control Chart",
-    meta: { index: 3 },
-    component: ControlChart
-  },
-  {
-    path: "/lotacceptance",
-    name: "Lot Acceptance",
-    meta: { index: 4 },
-    component: LotAcceptance
+    path: "/tool",
+    name: "toolview",
+    component: TheToolView,
+    children: [
+      {
+        path: "5W",
+        name: "5W",
+        component: The5W
+      },
+      {
+        path: "Pareto",
+        name: "pareto",
+        component: Pareto
+      },
+      {
+        path: "ControlChart",
+        name: "Control Chart",
+        component: ControlChart
+      },
+      {
+        path: "Lotacceptance",
+        name: "Lot Acceptance",
+        component: TheLotAcceptance
+      }
+    ]
   }
 ];
 
@@ -46,5 +54,6 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
 
 export default router;

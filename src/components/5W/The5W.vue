@@ -6,6 +6,7 @@
       :amIaChild="false"
       :key="'theGrandFather'"
       v-on:data-updated="allData=$event"
+      v-on:star-road-data="starRoadData=$event"
     />
   </b-container>
 </template>
@@ -18,16 +19,51 @@ export default {
   components: {
     Only1W
   },
+  props: {
+    uniqueId: {
+      type: String,
+      default: "#DDDAAA"
+    }
+  },
   data() {
     return {
       esteNivel: 0,
       inicio: [1],
       allData:null,
+      starRoadData:null,
     };
   },
   methods: {
+
   },
-  computed: {}
+  computed: {
+    result:function(){
+      this.$emit('result-event')
+      return {
+        metadata: {
+          toolName: "FiveWhy",
+          id: this.uniqueId
+        },
+        data: this.allData,
+        header: { tags:[] },
+        body: {
+          /* idTableResult es la id de los elementos en tabla que son relevantes:
+          pareto: elementos que genera el 80% de los casos
+          carta de control: elementos fuera de control (average and variability)
+          */
+         rootCause5Why:this.starRoadData
+        },
+      };
+    }
+  },
+  watch: {
+    result: {
+      deep: true,
+      handler: function (val, oldVal) {
+        this.$emit('result-event',val)
+      }
+    },
+  },
 };
 </script>
 

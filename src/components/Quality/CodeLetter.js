@@ -196,11 +196,23 @@ const letterList=
 ]
 const sampleSizeList=[2,3,5,8,13,20,32,50,80,125,200,315,500,800,1250]
 
-
-function determineSampleSize(letterfound){
-  return sampleSizeList[ letterList.indexOf(letterfound) ]
+/**
+ * To get the sample size of the lot
+ * @param {String} rowLetter Letter of the row of table MIL STD 105E
+ * @returns {Number} Sample size
+ */
+function determineSampleSize(rowLetter){
+  return sampleSizeList[ letterList.indexOf(rowLetter) ]
 }
 
+
+/**
+ * Find the letter for the row on mater table of MIL STD 105E
+ *
+ * @param {String} inspectionLevel Type of inspection (I,II,III) o (S1,S2,S3,S4)
+ * @param {Number} lotSize Lot Size
+ * @returns {String} The letter of the row
+ */
 function determineLetter(inspectionLevel, lotSize) {
   const tableIndex = SampleSizeTable.findIndex(el => {
     if (parseInt(el.min) <= lotSize && parseInt(el.max) >= lotSize) {

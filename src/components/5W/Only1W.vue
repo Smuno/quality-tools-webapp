@@ -1,28 +1,51 @@
 <template>
   <div>
-    <b-row class="bg-info mainRow">
-      <b-col class="text-light mainCol" :md="colSize" :id="actualLevel">
+    <b-row>
+      <b-col :class="variantRoad + ' mainCol'" :md="colSize" :id="actualLevel">
         <!-- Evento Crear nueva fila - el componente padre se preocupa-->
         <editor-content class="textFromThisLevel" :editor="editor" />
         <!-- Botones para añadir y remover sub-filas -->
-        <b-button @click="userClick" variant="success" size="sm">+</b-button>
-        <b-button
-          v-show="!amIaChild && listRow.length > 0"
-          @click="userClickRemove"
-          variant="danger"
-          size="sm"
-          >x</b-button
-        >
+        <b-button-group>
+          <b-button
+            v-if="levelCol > 0"
+            @click="userClick"
+            variant="success"
+            size="sm"
+          >
+            <b-icon icon="plus-circle" />
+          </b-button>
+          <b-button
+            v-if="!isNotTheEnd"
+            variant="dark"
+            size="sm"
+            @click="createStarRoad"
+          >
+            <b-icon
+              :icon="isThisStarRoad ? 'star-fill' : 'star'"
+              variant="warning"
+            />
+          </b-button>
+          <b-button
+            v-show="!amIaChild && listRow.length > 0"
+            @click="userClickRemove"
+            variant="danger"
+            size="sm"
+          >
+            <b-icon icon="x-square" />
+          </b-button>
+        </b-button-group>
       </b-col>
       <!-- Crea siguiente columna - Hacia la derecha-->
       <b-col>
         <Only1W
-          v-if="isThisTheEnd"
+          v-if="isNotTheEnd"
           :yourLevel="nextyourLevel"
           :key="actualLevel"
           :levelCol="levelCol + 1"
           v-model="textNextCol"
-          v-on:data-updated="listenColData($event)"
+          @data-updated="listenColData($event)"
+          @star-road="isThisStarRoad = $event"
+          @star-road-data="CALLroadData($event)"
         >
         </Only1W>
       </b-col>
@@ -35,8 +58,10 @@
         :levelCol="levelCol"
         :key="index"
         :amIaChild="true"
-        v-on:neednewrow="userClick"
-        v-on:data-updated="listenRowData(index, $event)"
+        @neednewrow="userClick"
+        @data-updated="listenRowData(index, $event)"
+        @star-road="nextFather('star-road', $event)"
+        @star-road-data="nextFather('star-road-data', $event)"
       >
       </Only1W>
     </div>
@@ -44,7 +69,9 @@
 </template>
 
 <script>
+//todo Mejorar alerta star-road, evitar usar $root.$emit
 import { Editor, EditorContent } from "tiptap";
+import _ from "lodash";
 
 export default {
   name: "Only1W",
@@ -53,7 +80,7 @@ export default {
   },
   props: {
     /*levelCol Controla profundidad (nunmero de columnas) - 
-    usado como parada en isThisTheEnd*/
+    usado como parada en isNotTheEnd*/
     levelCol: Number,
     /* Padre controla el nivel (ej 1.1.2)
     de la forma [1][1][2] - no debe cambiar */
@@ -76,7 +103,9 @@ export default {
       /* data de la columna hijo - recursivo */
       textNextCol: null,
       /* data de la fila hijo */
-      textNextRow: []
+      textNextRow: [],
+      /* show button star */
+      isThisStarRoad: false
     };
   },
   methods: {
@@ -87,15 +116,13 @@ export default {
     },
     /* En click controla si crear nueva linea o solicitar al padre que lo haga */
     userClick: function() {
+      this.$root.$emit("star-road-off");
       // Crear nueva linea solo si es padre - Funcion no requiere cambios
-      if (this.amIaChild) {
-        this.$emit("neednewrow");
-      } else {
-        this.newRow();
-      }
+      this.amIaChild ? this.$emit("neednewrow") : this.newRow();
     },
     //Para remover una fila
     userClickRemove: function() {
+      this.$root.$emit("star-road-off");
       this.listRow.pop();
     },
     /* Crea etiqueta de nivel para nueva fila */
@@ -104,21 +131,53 @@ export default {
       toreturn[toreturn.length - 1] = index + 1;
       return toreturn;
     },
-    /* Listener ante llegada de datos por fila */
-    listenRowData: function(index, dataFromEvent) {
-      this.textNextRow[index] = [dataFromEvent];
-      this.textDataUpdate();
-    },
-    /* Ante llegada de datos por columna */
-    listenColData: function(dataFromEvent) {
-      this.textNextCol = dataFromEvent;
-      this.textDataUpdate();
-    },
     /* Ante cambios en cualquier nivel hijo o de este nivel */
     textDataUpdate: function() {
       this.textCurrentLevel = this.editor.getJSON().content[0].content[0].text;
       this.$forceUpdate();
       this.$emit("data-updated", this.allData);
+
+      if (!this.isNotTheEnd && this.isThisStarRoad) {
+        this.$emit("star-road-data", [this.textCurrentLevel]);
+      }
+    },
+    /* Listener ante llegada de datos por fila */
+    listenRowData: function(index, dataFromEvent) {
+      this.textNextRow[index] = [dataFromEvent];
+      this.textDataUpdate();
+    },
+    /* Ante llegada de datos por columna - Callback for editor*/
+    listenColData: function(dataFromEvent) {
+      this.textNextCol = dataFromEvent;
+      this.textDataUpdate();
+    },
+
+    /** metodos para star road */
+    //* Se un nivel para pasar al padre correspondiente
+    nextFather: function(nameEvent, starRoad) {
+      this.$emit(nameEvent, starRoad);
+    },
+    /** Se crea un nuevo camino de causa raiz  */
+    createStarRoad: function() {
+      //Pasar datos en cadena hacia arriba
+      const textStarRoad = this.textCurrentLevel;
+      this.$emit("star-road-data", [textStarRoad]);
+
+      /*Se elimina cualquier star-road existente
+      y se setea lo que corresponde al boton
+      */
+      const beforeToggle = _.cloneDeep(this.isThisStarRoad);
+      this.$root.$emit("star-road-off");
+      setTimeout(() => {
+        this.isThisStarRoad = !beforeToggle;
+        this.$emit("star-road", this.isThisStarRoad);
+      }, 10);
+    },
+    //* Traspasa la data de manera paralela desde la causa raiz hasta The5W
+    CALLroadData: function(dataFromBellow) {
+      const textStarRoad = _.cloneDeep(this.textCurrentLevel);
+      dataFromBellow.unshift(textStarRoad);
+      this.$emit("star-road-data", dataFromBellow);
     }
   },
   computed: {
@@ -127,12 +186,17 @@ export default {
       const toreturn = this.yourLevel.concat(1);
       return toreturn;
     },
-    /* determina si debe terminar de dibujar columnas (limitado a 4 por contexto 5Why) */
-    isThisTheEnd: function() {
+    /* determina si debe terminar de dibujar columnas (limitado a 4 por contexto 5Why)*/
+    isNotTheEnd: function() {
       return this.levelCol < 4;
     },
     /* Determina ancho de columna segun profundidad - tabulado a la mala pero funciona
     ¿hay otra forma? */
+    variantRoad: function() {
+      this.$emit("star-road", this.isThisStarRoad);
+      return this.isThisStarRoad ? "bg-warning" : "bg-info";
+    },
+    //? existe una manera que no sea a mano?
     colSize: function() {
       let innerSize = 3;
       switch (this.levelCol) {
@@ -156,7 +220,8 @@ export default {
       }
       return innerSize;
     },
-    /* Crea string para el nivel añadiendo puntos entre numeros- funciona bien */
+    /* Crea string para el nivel añadiendo puntos entre numeros
+    Probablemente innecesario, pero ayuda para ref*/
     actualLevel: function() {
       let stringLevel = "";
       this.yourLevel.forEach((el, index) => {
@@ -168,20 +233,26 @@ export default {
     /* Arma objeto para ser entregado al padre via $emit en textDataUpdate */
     allData: function() {
       return {
-        father: this.textCurrentLevel,
+        text: this.textCurrentLevel,
         columns: this.textNextCol,
         rows: this.textNextRow
       };
     }
   },
   mounted() {
+    //* event for star road
+    this.$root.$on("star-road-off", () => {
+      this.isThisStarRoad = false;
+    });
+    //* text editor
     let timeoutTyping = null;
+    const timeTyping = 500;
     this.editor = new Editor({
       content: "¿Por qué... " + this.actualLevel,
       onUpdate: () => {
         //Esperando que usuario termine de tipear
         clearTimeout(this.timeoutTyping);
-        this.timeoutTyping = setTimeout(this.textDataUpdate, 1000);
+        this.timeoutTyping = setTimeout(this.textDataUpdate, timeTyping);
       }
     });
   },

@@ -2,10 +2,10 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/tempo">Tempo</router-link> |
-      <router-link to="/pareto">Pareto</router-link> |
-      <router-link to="/ControlChart">Control Chart</router-link> |
-      <router-link to="/lotacceptance">Control Chart</router-link> |
+      <router-link to="/tool/5W">5 Why</router-link> |
+      <router-link to="/tool/Pareto">Pareto</router-link> |
+      <router-link to="/tool/ControlChart">Control Chart</router-link> |
+      <router-link to="/tool/Lotacceptance">Lot Acceptance</router-link> |
     </div>
     <transition>
       <b-container fluid id="views">

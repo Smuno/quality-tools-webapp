@@ -47,8 +47,8 @@ export default {
     tableData: {
       deep: true,
       handler: function(newValue) {
-        this.$emit("changeOnTable", newValue);
         this.table.replaceData(newValue);
+        this.table.redraw(true)
       }
     },
     options: {
